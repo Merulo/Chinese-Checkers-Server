@@ -12,4 +12,10 @@ public class MainTest {
 
     }
 
+    @org.junit.Test
+    public void addThreeStrings() throws Exception {
+
+        assertEquals("abc", Main.addThreeStrings("a", "b", "c"));
+
+    }
 }
