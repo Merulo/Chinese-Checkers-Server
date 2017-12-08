@@ -1,10 +1,32 @@
 package Server;
 
+import Server.Server.Server;
+
 public class Main {
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        Server server = new Server(4444);
+
+        if(!server.createServer()){
+            System.out.println("Nie udało się stworzyć serwer!");
+            return;
+        }
+
+        server.listen();
+
+
+
+
     }
+
+
+
+
+
+
+
+
+
 
     public static String addStrings(String a, String b){
         return a + b;
