@@ -30,7 +30,6 @@ public class Game{
             return;
         }
         System.out.println("Sending!");
-        message = message;
         for(AbstractPlayer player : players){
             if(!player.isPlaying()){
                 //TODO: REMOVE PLAYER
