@@ -21,4 +21,6 @@ public class LobbyState {
     public void handleLobby(){
         state.handleLobby(this);
     }
+
+    public State getState(){return state;}
 }

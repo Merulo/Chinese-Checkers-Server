@@ -3,7 +3,6 @@ package Server.Player;
 import Server.Game.Game;
 import Server.Game.Hub;
 import Server.SimpleParser;
-import com.sun.prism.null3d.NULL3DPipeline;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,7 +15,6 @@ public class HumanPlayer extends AbstractPlayer {
     BufferedReader input;
     PrintWriter output;
     Hub hub;
-    Game game;
 
     public HumanPlayer(Socket socket, Hub hub) {
         this.socket = socket;
@@ -48,17 +46,26 @@ public class HumanPlayer extends AbstractPlayer {
             while (true) {
                 String string = input.readLine();
                 System.out.println("GAME MESSAGE" + string);
+                //message is null, removing client
                 if(string == null){
+                    System.out.println("QUITTING");
                     playing = false;
+                    if (game != null) {
+                        game.removePlayers();
+                    }
+                    else{
+                        hub.removePlayers();
+                    }
                     return;
                 }
+                //JOIN;LOBBY_NUMBER;
                 else if(SimpleParser.parse(string).equals("JOIN")){
-                    System.out.println("ROBIE JOIN");
                     string = SimpleParser.cut(string);
-                    System.out.println("HUB MESSAGE:" + string + "X");
                     int number = Integer.parseInt(SimpleParser.parse(string));
                     hub.enterGame(this, number);
                 }
+                //MESSAGE TO RESEND
+                //TODO: ADD IN HUB
                 else if (game != null){
                     game.resendMessage(string);
                 }
@@ -67,14 +74,6 @@ public class HumanPlayer extends AbstractPlayer {
         }
         catch (IOException e) {
             System.out.println("Player died: " + e);
-        }
-        finally {
-            try {
-                socket.close();
-            }
-            catch (IOException e) {
-
-            }
         }
     }
 
