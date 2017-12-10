@@ -33,7 +33,7 @@ public class Game{
     //return gameData as string
     //use it to display gameinfo
     public String getGameData(){
-        String result = "GAMEDATA;";
+        String result = "GameData;";
         result += gameName + ";";
         result += Integer.toString(players.size()) + ";";
         result += lobbyState.getState().getName() + ";";
@@ -41,7 +41,7 @@ public class Game{
     }
 
     public String getGameDetailedData(){
-        String result = "GAMEDETAILEDDATA;";
+        String result = "GameDetailedData;";
         result += gameName + ";";
         result += Integer.toString(players.size()) + ";";
         result += lobbyState.getState().getName() + ";";
