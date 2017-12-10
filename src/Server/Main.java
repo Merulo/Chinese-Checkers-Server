@@ -5,6 +5,7 @@ import Server.Network.Server;
 public class Main {
 
     public static void main(String[] args) {
+
         //create server object
         Server server = new Server(5555);
 
