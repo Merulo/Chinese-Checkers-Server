@@ -31,7 +31,7 @@ public class Hub extends Thread{
         games.get(number).addPlayer(client);
         client.sendMessage("YOU ARE NOW IN LOBBY: " + Integer.toString(number));
         client.sendMessage("NEXT MESSAGE CONTAINS DATA");
-        client.sendMessage(games.get(number).getGameData());
+        client.sendMessage(games.get(number).getGameDetailedData());
 
     }
     //add new socket to the players list

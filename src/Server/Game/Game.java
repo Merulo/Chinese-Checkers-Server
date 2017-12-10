@@ -40,6 +40,14 @@ public class Game{
         return result;
     }
 
+    public String getGameDetailedData(){
+        String result = "GAMEDETAILEDDATA;";
+        result += gameName + ";";
+        result += Integer.toString(players.size()) + ";";
+        result += lobbyState.getState().getName() + ";";
+        return result;
+    }
+
     //adds client to the players list in the current game
     //sets the player game to this
     public void addPlayer(HumanPlayer client){
