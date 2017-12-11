@@ -1,18 +1,19 @@
 package Server.Network;
 
-import Server.Game.Game;
-
 import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server {
     private ServerSocket serverSocket;
     int port;
-    Game game;
+    Hub hub;
+
 
     //create object and set up port
     public Server(int port){
         this.port = port;
+        hub = new Hub();
+        hub.start();
     }
 
     //creates server socket, returns if successful
@@ -33,12 +34,8 @@ public class Server {
             try {
                 //waits for connections
                 Socket clientSocket = serverSocket.accept();
-                //creates game if needed
-                if(game == null){
-                    game = new Game();
-                }
-                //adds player to the game
-                game.addPlayer(clientSocket);
+                //adds new connecting socket to client list
+                hub.addClient(clientSocket);
 
             }
             catch (Exception ex){

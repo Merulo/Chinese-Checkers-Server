@@ -2,9 +2,12 @@ package Server;
 
 import Server.Network.Server;
 
+//TODO: HUB AND GAME ONE ABSTRACT CLASS
+
 public class Main {
 
     public static void main(String[] args) {
+
         //create server object
         Server server = new Server(5555);
 
