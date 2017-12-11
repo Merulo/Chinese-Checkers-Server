@@ -29,7 +29,7 @@ public class Server {
 
     //listens for connecting players
     public void listen(){
-
+        System.out.println("START LISTENING");
         while (true){
             try {
                 //waits for connections

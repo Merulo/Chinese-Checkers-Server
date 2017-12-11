@@ -1,7 +1,8 @@
 package ServerTest;
 
-import static org.junit.Assert.*;
 import Server.Main;
+
+import static org.junit.Assert.*;
 
 public class MainTest {
 
