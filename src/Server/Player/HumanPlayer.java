@@ -3,12 +3,14 @@ package Server.Player;
 import Server.Network.Game;
 import Server.Network.Hub;
 import Server.SimpleParser;
+import javafx.scene.paint.Color;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Random;
 
 public class HumanPlayer extends AbstractPlayer {
     Socket socket;
@@ -19,6 +21,9 @@ public class HumanPlayer extends AbstractPlayer {
     public HumanPlayer(Socket socket, Hub hub) {
         this.socket = socket;
         this.hub = hub;
+        Random rand = new Random();
+        color = new Color(Math.random(), Math.random(), Math.random() ,0.5);
+
         try {
             input = new BufferedReader( new InputStreamReader(socket.getInputStream()));
             output = new PrintWriter(socket.getOutputStream(), true);
@@ -64,7 +69,6 @@ public class HumanPlayer extends AbstractPlayer {
             }
         }
         //MESSAGE TO RESEND
-        //TODO: ADD IN HUB?
         else if (game != null){
             game.resendMessage(message);
         }
@@ -89,5 +93,11 @@ public class HumanPlayer extends AbstractPlayer {
             System.out.println("Player died: " + e);
         }
     }
+
+
+
+
+
+
 
 }

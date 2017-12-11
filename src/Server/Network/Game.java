@@ -2,40 +2,47 @@ package Server.Network;
 
 import Server.Player.AbstractPlayer;
 import Server.Player.HumanPlayer;
-import Server.LobbyState.LobbyState;
 
 import java.util.ArrayList;
 import java.util.List;
 import Server.Settings;
 
-//Game-Lobby class
+//Game/Lobby class
 public class Game implements NetworkManager {
     //list of players connected to the game
     volatile private List<AbstractPlayer> players;
     //Hub variable
     private Hub hub;
+    //variable with the settings of the game
     private Settings settings;
-    //TODO: ADD VARIABLE WITH SETTINGS
 
-    //creates the game array
-    //sets the game name
-    //sets lobby states
+    //creates game, sets hub, and gives the game number
     public Game(Hub hub, int number){
         players = new ArrayList<>();
         settings = new Settings("Game: " + Integer.toString(number + 1), number);
         this.hub = hub;
     }
 
-    //adds player to client list when moving from Lobby to Hub
+    //adds player to the game, sets the player variables
     @Override
-    public void addPlayer(HumanPlayer player){
-        players.add(player);
+    public synchronized void addPlayer(HumanPlayer player){
         player.setGame(this);
+        player.sendMessage(settings.getDetailedData(players.size()));
+
+        for(AbstractPlayer abstractPlayer : players){
+            abstractPlayer.sendMessage(player.getData());
+        }
+
+        players.add(player);
+
+        for(AbstractPlayer abstractPlayer : players){
+            player.sendMessage(abstractPlayer.getData());
+        }
     }
 
-    //removes the client form the list
+    //removes the client form the list if the connection was closed
     @Override
-    public void removePlayers(){
+    public synchronized void removePlayers(){
         try {
             for(int i = 0; i < players.size(); i++){
                 if(!players.get(i).isPlaying()){
@@ -49,6 +56,7 @@ public class Game implements NetworkManager {
         }
     }
 
+    //moves the player from game to hub
     @Override
     public synchronized void enter(HumanPlayer client, int number){
         System.out.println("MOVING FORM HUB TO GAME");
@@ -56,19 +64,22 @@ public class Game implements NetworkManager {
         hub.addPlayer(client);
     }
 
-    //returns lobby states
-    /*
-    public LobbyState getLobbyState() {
-        return lobbyState;
-    }
-    */
-
     public String getGameData(){
         return settings.getGeneralData(players.size());
     }
 
-    public String getGameDetailedData(){
-        return settings.getDetailedData(players.size());
+    public boolean canJoin(){
+        if(settings.getMaxPlayerNumber() <= players.size()){
+            return false;
+        }
+        System.out.println("1");
+        //TODO: FINISH THIS CODE
+        //if(settings.getLobbyState().getState()){
+        //    return false;
+        //}
+        System.out.println("2");
+        return true;
+
     }
 
 
@@ -77,7 +88,7 @@ public class Game implements NetworkManager {
         if (message == null){
             return;
         }
-        System.out.println("Sending!");
+        System.out.println("Sending " + message);
         for(AbstractPlayer player : players){
             if(player.isPlaying()){
                 player.sendMessage(message);

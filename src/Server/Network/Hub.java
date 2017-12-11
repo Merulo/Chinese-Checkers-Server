@@ -52,12 +52,14 @@ public class Hub extends Thread implements NetworkManager {
     //moves one player from the hub to the game
     @Override
     public synchronized void enter(HumanPlayer client, int number){
-        System.out.println("MOVING FORM HUB TO GAME");
-        players.remove(client);
-        games.get(number).addPlayer(client);
-        client.sendMessage("YOU ARE NOW IN LOBBY: " + Integer.toString(number));
-        client.sendMessage("NEXT MESSAGE CONTAINS DATA");
-        client.sendMessage(games.get(number).getGameDetailedData());
+        if(games.get(number).canJoin()) {
+            players.remove(client);
+            games.get(number).addPlayer(client);
+        }
+        else{
+            //TODO: REPLACE WITH PROPER MESSAGE
+            client.sendMessage("Leave");
+        }
     }
 
     //add new socket to the players list

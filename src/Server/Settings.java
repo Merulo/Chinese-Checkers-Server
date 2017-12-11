@@ -7,16 +7,17 @@ import java.util.List;
 
 public class Settings {
     private LobbyState lobbyState;
-    String gameName;
-    int pawnNumber = 10;
-    int maxPlayerNumber = 6;
-    int gameNumber;
-    List<Move> moves;
+    private String gameName;
+    private int pawnNumber = 10;
+    private int maxPlayerNumber = 6;
+    private int gameNumber;
+    private List<Move> moves;
 
     public Settings(String name, int gameNumber){
         gameName = name;
         this.gameNumber = gameNumber;
         lobbyState = new LobbyState();
+        pawnNumber = 10;
     }
 
     public String getGeneralData( int playerCount){
@@ -41,5 +42,11 @@ public class Settings {
         return result;
     }
 
+    public int getMaxPlayerNumber(){
+        return maxPlayerNumber;
+    }
 
+    public LobbyState getLobbyState() {
+        return lobbyState;
+    }
 }
