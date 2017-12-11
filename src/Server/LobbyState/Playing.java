@@ -1,4 +1,4 @@
-package Server.StateDesignPattern;
+package Server.LobbyState;
 
 /**CONDITION: (ONE MUST BE TRUE)
  * At least one human player still playing the game

@@ -1,7 +1,7 @@
 package Server.Player;
 
-import Server.Game.Game;
-import Server.Game.Hub;
+import Server.Network.Game;
+import Server.Network.Hub;
 import Server.SimpleParser;
 
 import java.io.BufferedReader;
@@ -26,12 +26,48 @@ public class HumanPlayer extends AbstractPlayer {
         catch (IOException e) {
             System.out.println("Player died: " + e);
         }
-        this.game = game;
         output.println("WELCOME");
     }
 
     public void setGame(Game game) {
         this.game = game;
+    }
+
+    public void parseMessage(String message){
+        //message is null, removing client
+        if(message == null){
+            System.out.println("QUITTING");
+            playing = false;
+            if (game != null) {
+                game.removePlayers();
+            }
+            else{
+                hub.removePlayers();
+            }
+            return;
+        }
+        //Join;LobbyNumber
+        else if(SimpleParser.parse(message).equals("Join")){
+            message = SimpleParser.cut(message);
+            int number = Integer.parseInt(SimpleParser.parse(message));
+            hub.enter(this, number);
+        }
+        //Nick;PlayerNick
+        else if(SimpleParser.parse(message).equals("Nick")){
+            message = SimpleParser.cut(message);
+            nick = message;
+        }
+        //Leave;
+        else if(SimpleParser.parse(message).equals("Leave")){
+            if(game != null) {
+                game.enter(this, 0);
+            }
+        }
+        //MESSAGE TO RESEND
+        //TODO: ADD IN HUB?
+        else if (game != null){
+            game.resendMessage(message);
+        }
     }
 
     @Override
@@ -43,33 +79,10 @@ public class HumanPlayer extends AbstractPlayer {
     public void run() {
         try {
             System.out.println("HUMAN PLAYER STARTING" );
-            while (true) {
+            while (playing) {
                 String string = input.readLine();
                 System.out.println("GAME MESSAGE" + string);
-                //message is null, removing client
-                if(string == null){
-                    System.out.println("QUITTING");
-                    playing = false;
-                    if (game != null) {
-                        game.removePlayers();
-                    }
-                    else{
-                        hub.removePlayers();
-                    }
-                    return;
-                }
-                //JOIN;LOBBY_NUMBER;
-                else if(SimpleParser.parse(string).equals("JOIN")){
-                    string = SimpleParser.cut(string);
-                    int number = Integer.parseInt(SimpleParser.parse(string));
-                    hub.enterGame(this, number);
-                }
-                //MESSAGE TO RESEND
-                //TODO: ADD IN HUB
-                else if (game != null){
-                    game.resendMessage(string);
-                }
-
+                parseMessage(string);
             }
         }
         catch (IOException e) {

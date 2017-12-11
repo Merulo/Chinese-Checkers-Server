@@ -1,4 +1,4 @@
-package Server.StateDesignPattern;
+package Server.LobbyState;
 
 /**CONDITION: (ONE MUST BE TRUE)
  * Not all players are ready

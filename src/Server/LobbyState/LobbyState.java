@@ -1,4 +1,4 @@
-package Server.StateDesignPattern;
+package Server.LobbyState;
 
 public class LobbyState {
     private State state;

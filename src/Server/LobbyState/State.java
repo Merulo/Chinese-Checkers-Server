@@ -1,4 +1,4 @@
-package Server.StateDesignPattern;
+package Server.LobbyState;
 
 //Design-pattern Sate
 //used by the Hub to change state of the game!
