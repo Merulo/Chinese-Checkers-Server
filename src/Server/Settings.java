@@ -21,7 +21,7 @@ public class Settings {
 
     public String getGeneralData( int playerCount){
         String result = "GameData;";
-        result += Integer.toString(gameNumber + 1) + ";";
+        result += Integer.toString(gameNumber) + ";";
         result += gameName + ";";
         result += Integer.toString(playerCount) + ";";
         result += maxPlayerNumber + ";";
