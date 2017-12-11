@@ -22,7 +22,7 @@ public class Game implements NetworkManager {
     //sets lobby states
     public Game(Hub hub, int number){
         players = new ArrayList<>();
-        settings = new Settings("Game: " + Integer.toString(number), number);
+        settings = new Settings("Game: " + Integer.toString(number + 1), number);
         this.hub = hub;
     }
 
