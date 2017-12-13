@@ -1,8 +1,8 @@
-package Server;
+package Server.Rules;
 //TODO: FIND COZY PLACE FOR THIS CLASS
 
 import Server.LobbyState.LobbyState;
-import Server.Rules.Move;
+
 import java.util.List;
 
 public class Settings {
@@ -11,7 +11,6 @@ public class Settings {
     private int pawnNumber = 10;
     private int maxPlayerNumber = 6;
     private int gameNumber;
-    private List<Move> moves;
 
     public Settings(String name, int gameNumber){
         gameName = name;

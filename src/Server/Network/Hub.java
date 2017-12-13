@@ -17,7 +17,7 @@ public class Hub extends Thread implements NetworkManager {
     private List<AbstractPlayer> players;
 
     //creates the lists and adds 10 games
-    public Hub(){
+    Hub(){
         games = new ArrayList<>();
         players = new ArrayList<>();
         for(int i = 0; i < 10; i++){
@@ -35,7 +35,7 @@ public class Hub extends Thread implements NetworkManager {
 
     //removes the client form the list
     @Override
-    public void removePlayers(){
+    public synchronized void removePlayers(){
         try {
             for(int i = 0; i < players.size(); i++){
                 if(!players.get(i).isPlaying()){
@@ -57,13 +57,12 @@ public class Hub extends Thread implements NetworkManager {
             games.get(number).addPlayer(client);
         }
         else{
-            //TODO: REPLACE WITH PROPER MESSAGE
-            client.sendMessage("Leave");
+            client.sendMessage("Full;");
         }
     }
 
     //add new socket to the players list
-    public synchronized void addClient(Socket socket){
+    synchronized void addClient(Socket socket){
         System.out.println("NEW HUB CLIENT");
         players.add(new HumanPlayer(socket, this));
         players.get(players.size() - 1).start();
@@ -71,22 +70,30 @@ public class Hub extends Thread implements NetworkManager {
     }
 
     //sends one game data to all the players
-    public synchronized void sendGame(Game game){
+    synchronized void sendGame(Game game){
         for (AbstractPlayer client : players){
             client.sendMessage(game.getGameData());
         }
     }
 
     //sends the game data about all games to one client
-    public synchronized void sendGameList(AbstractPlayer client){
+    private synchronized void sendGameList(AbstractPlayer client){
         for (Game game : games){
             client.sendMessage(game.getGameData());
         }
     }
 
+    //handles the build-in logic
     @Override
     public void run(){
         while(true){
+            try {
+                //TODO: REMOVE THIS PART WHEN UNNECESSARY
+                Thread.sleep(100);
+            }
+            catch (Exception ex){
+                ex.printStackTrace();
+            }
             //for each game in games
             for(Game game : games){
                 //get lobby state which has the method handle lobby

@@ -10,20 +10,15 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.Random;
 
 public class HumanPlayer extends AbstractPlayer {
-    Socket socket;
-    BufferedReader input;
-    PrintWriter output;
-    Hub hub;
+    private BufferedReader input;
+    private PrintWriter output;
+    private Hub hub;
 
     public HumanPlayer(Socket socket, Hub hub) {
-        this.socket = socket;
         this.hub = hub;
-        Random rand = new Random();
         color = new Color(Math.random(), Math.random(), Math.random() ,0.5);
-
         try {
             input = new BufferedReader( new InputStreamReader(socket.getInputStream()));
             output = new PrintWriter(socket.getOutputStream(), true);
@@ -38,39 +33,27 @@ public class HumanPlayer extends AbstractPlayer {
         this.game = game;
     }
 
-    public void parseMessage(String message){
+    private void parseMessage(String message){
         //message is null, removing client
         if(message == null){
-            System.out.println("QUITTING");
-            playing = false;
-            if (game != null) {
-                game.removePlayers();
-            }
-            else{
-                hub.removePlayers();
-            }
-            return;
+            handleNullMessage();
         }
+        String type = SimpleParser.parse(message);
         //Join;LobbyNumber
-        else if(SimpleParser.parse(message).equals("Join")){
-            message = SimpleParser.cut(message);
-            int number = Integer.parseInt(SimpleParser.parse(message));
-            hub.enter(this, number);
+        if(type.equals("Join")){
+            handleJoinMessage(message);
         }
         //Nick;PlayerNick
-        else if(SimpleParser.parse(message).equals("Nick")){
-            message = SimpleParser.cut(message);
-            nick = message;
+        else if(type.equals("Nick")){
+            handleNickMessage(message);
         }
         //Leave;
-        else if(SimpleParser.parse(message).equals("Leave")){
-            if(game != null) {
-                game.enter(this, 0);
-            }
+        else if(type.equals("Leave")){
+            handleLeaveMessage();
         }
         //MESSAGE TO RESEND
-        else if (game != null){
-            game.resendMessage(message);
+        else{
+            handleMessage(message);
         }
     }
 
@@ -91,6 +74,44 @@ public class HumanPlayer extends AbstractPlayer {
         }
         catch (IOException e) {
             System.out.println("Player died: " + e);
+        }
+    }
+
+    private void handleNullMessage(){
+        System.out.println("QUITTING");
+        playing = false;
+        if (game != null) {
+            game.removePlayers();
+        }
+        else{
+            hub.removePlayers();
+        }
+    }
+
+    private void handleJoinMessage(String message){
+        message = SimpleParser.cut(message);
+        int number = Integer.parseInt(SimpleParser.parse(message));
+        hub.enter(this, number);
+    }
+
+    private void handleNickMessage(String message){
+        message = SimpleParser.cut(message);
+        nick = message;
+    }
+
+    private void handleLeaveMessage(){
+        if(game != null) {
+            game.enter(this, 0);
+        }
+        else if (hub != null){
+            playing = false;
+            hub.removePlayers();
+        }
+    }
+
+    private void handleMessage(String message){
+        if (game != null){
+            game.resendMessage(message);
         }
     }
 

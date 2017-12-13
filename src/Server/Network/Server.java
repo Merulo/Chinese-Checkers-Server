@@ -5,8 +5,8 @@ import java.net.Socket;
 
 public class Server {
     private ServerSocket serverSocket;
-    int port;
-    Hub hub;
+    private int port;
+    private Hub hub;
 
 
     //create object and set up port
@@ -39,6 +39,7 @@ public class Server {
 
             }
             catch (Exception ex){
+                ex.printStackTrace();
                 System.out.println("Cant establish connection");
                 return;
             }

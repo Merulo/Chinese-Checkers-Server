@@ -1,11 +1,13 @@
 package Server.Network;
 
+import Server.LobbyState.Open;
 import Server.Player.AbstractPlayer;
 import Server.Player.HumanPlayer;
 
 import java.util.ArrayList;
 import java.util.List;
-import Server.Settings;
+import Server.Rules.Settings;
+import com.sun.org.apache.bcel.internal.generic.INSTANCEOF;
 
 //Game/Lobby class
 public class Game implements NetworkManager {
@@ -17,7 +19,7 @@ public class Game implements NetworkManager {
     private Settings settings;
 
     //creates game, sets hub, and gives the game number
-    public Game(Hub hub, int number){
+    Game(Hub hub, int number){
         players = new ArrayList<>();
         settings = new Settings("Game: " + Integer.toString(number + 1), number);
         this.hub = hub;
@@ -38,6 +40,8 @@ public class Game implements NetworkManager {
         for(AbstractPlayer abstractPlayer : players){
             player.sendMessage(abstractPlayer.getData());
         }
+
+        hub.sendGame(this);
     }
 
     //removes the client form the list if the connection was closed
@@ -46,6 +50,11 @@ public class Game implements NetworkManager {
         try {
             for(int i = 0; i < players.size(); i++){
                 if(!players.get(i).isPlaying()){
+                    //TODO: VERIFY THIS CODE
+                    for(AbstractPlayer abstractPlayer : players){
+                        if(abstractPlayer != players.get(i))
+                            abstractPlayer.sendMessage("Remove:" +  players.get(i).getData() + ";");
+                    }
                     players.remove(i);
                     i = i - 1;
                 }
@@ -54,32 +63,36 @@ public class Game implements NetworkManager {
         catch (Exception ex){
             ex.printStackTrace();
         }
+        hub.sendGame(this);
+
     }
 
     //moves the player from game to hub
     @Override
     public synchronized void enter(HumanPlayer client, int number){
-        System.out.println("MOVING FORM HUB TO GAME");
+        System.out.println("MOVING FROM GAME TO HUB");
         players.remove(client);
+        //TODO: VERIFY THIS CODE
+        for(AbstractPlayer abstractPlayer : players){
+            abstractPlayer.sendMessage("Remove:" + client.getData() + ";");
+        }
+
+        hub.sendGame(this);
         hub.addPlayer(client);
     }
 
-    public String getGameData(){
+    //returns game data which can be send to other players
+    String getGameData(){
         return settings.getGeneralData(players.size());
     }
 
-    public boolean canJoin(){
+    //returns true if it is possible to join the game
+    boolean canJoin(){
         if(settings.getMaxPlayerNumber() <= players.size()){
             return false;
         }
-        System.out.println("1");
-        //TODO: FINISH THIS CODE
-        //if(settings.getLobbyState().getState()){
-        //    return false;
-        //}
-        System.out.println("2");
-        return true;
-
+        //TODO: VERIFY THIS CODE
+        return (settings.getLobbyState().getState() instanceof Open);
     }
 
 
