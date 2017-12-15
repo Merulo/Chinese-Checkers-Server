@@ -30,6 +30,10 @@ public abstract class AbstractPlayer extends Thread {
         return result;
     }
 
+    public String getNick(){
+        return nick;
+    }
+
     public boolean isReady(){return ready;}
 
 

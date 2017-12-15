@@ -22,6 +22,7 @@ public class Game implements NetworkManager {
     //countdown time variable
     private long startMillis;
 
+
     //creates game, sets hub, and gives the game number
     Game(Hub hub, int number){
         players = new ArrayList<>();
@@ -58,7 +59,7 @@ public class Game implements NetworkManager {
                     //TODO: VERIFY THIS CODE
                     for(AbstractPlayer abstractPlayer : players){
                         if(abstractPlayer != players.get(i))
-                            abstractPlayer.sendMessage("Remove:" +  players.get(i).getData() + ";");
+                            abstractPlayer.sendMessage( "Remove:" +  players.get(i).getNick() + ";");
                     }
                     players.remove(i);
                     i = i - 1;
@@ -79,7 +80,7 @@ public class Game implements NetworkManager {
         players.remove(client);
         //TODO: VERIFY THIS CODE
         for(AbstractPlayer abstractPlayer : players){
-            abstractPlayer.sendMessage("Remove;" + client.getData() + ";");
+            abstractPlayer.sendMessage("Remove;" + client.getNick() + ";");
         }
 
         hub.sendGame(this);
