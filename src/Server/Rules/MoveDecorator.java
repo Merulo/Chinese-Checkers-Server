@@ -1,7 +1,6 @@
 package Server.Rules;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class MoveDecorator {
     private int map[][];
@@ -30,19 +29,38 @@ public class MoveDecorator {
         //moveRules.remove(moveRule);
     }
 
-    public boolean checkMove(MapPoint oldPoint, MapPoint newPoint, int playerID){
-        //TODO: REWORK THIS CODE!
-
+    private void resetRules(){
         for(MoveRule moveRule : moveRules){
-            if (!moveRule.checkMove(map, oldPoint, newPoint, playerID)){
+            moveRule.reset();
+        }
+    }
+
+    private void sortRules() {
+        moveRules.sort(Comparator.comparing(MoveRule::getPriority));
+    }
+
+    public boolean checkMove(ArrayList<MapPoint> mapPoints, int playerID){
+
+        while (true){
+            boolean changed = false;
+            for(MoveRule moveRule : moveRules){
+                int result = moveRule.checkMove(map, mapPoints, playerID);
+
+                //TODO: TEST THIS
+                if( result == mapPoints.size()){
+                    return true;
+                }
+                //TODO: TEST THIS
+                if( result != -1){
+                    mapPoints.subList(0, result).clear();
+                    changed = true;
+                    break;
+                }
+            }
+            if (!changed){
                 return false;
             }
         }
-        map[newPoint.getX()][newPoint.getY()] = map[oldPoint.getX()][oldPoint.getY()];
-        map[oldPoint.getX()][oldPoint.getY()] = -1;
-
-
-        return true;
     }
 
 

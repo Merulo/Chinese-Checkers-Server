@@ -37,6 +37,7 @@ public class HumanPlayer extends AbstractPlayer {
         //message is null, removing client
         if(message == null){
             handleNullMessage();
+            return;
         }
         String type = SimpleParser.parse(message);
         //Join;LobbyNumber

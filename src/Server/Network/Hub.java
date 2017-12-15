@@ -89,16 +89,13 @@ public class Hub extends Thread implements NetworkManager {
         while(true){
             try {
                 //TODO: REMOVE THIS PART WHEN UNNECESSARY
-                Thread.sleep(100);
+                Thread.sleep(200);
             }
             catch (Exception ex){
                 ex.printStackTrace();
             }
-            //for each game in games
             for(Game game : games){
-                //get lobby state which has the method handle lobby
-                //TODO: ADD LOGIC IN HANDLE LOBBY
-
+                game.handleLobby();
             }
         }
     }

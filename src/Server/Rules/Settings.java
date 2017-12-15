@@ -2,8 +2,7 @@ package Server.Rules;
 //TODO: FIND COZY PLACE FOR THIS CLASS
 
 import Server.LobbyState.LobbyState;
-
-import java.util.List;
+import Server.Network.Game;
 
 public class Settings {
     private LobbyState lobbyState;
@@ -12,10 +11,10 @@ public class Settings {
     private int maxPlayerNumber = 6;
     private int gameNumber;
 
-    public Settings(String name, int gameNumber){
+    public Settings(Game game, String name, int gameNumber){
         gameName = name;
         this.gameNumber = gameNumber;
-        lobbyState = new LobbyState();
+        lobbyState = new LobbyState(game);
         pawnNumber = 10;
     }
 

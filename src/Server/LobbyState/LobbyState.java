@@ -1,12 +1,16 @@
 package Server.LobbyState;
 
+import Server.Network.Game;
+
 public class LobbyState {
     //current state of lobby
     private State state;
+    private Game game;
 
     //newly created lobby is open
-    public LobbyState(){
-        state = new Open();
+    public LobbyState(Game game){
+        this.game = game;
+        state = new ReadyToStart();
     }
 
     //changes the state of lobby
@@ -15,12 +19,12 @@ public class LobbyState {
     }
 
     //moves lobby to the next phase
-    public void nextPhase(){
+    void nextPhase(){
         state.changeStateNext(this);
     }
 
     //moves lobby to the previous phase
-    public void prevPhase(){
+    void prevPhase(){
         state.changeStatePrev(this);
     }
 
@@ -31,4 +35,8 @@ public class LobbyState {
 
     //returns the state of lobby
     public State getState(){return state;}
+
+    public Game getGame() {
+        return game;
+    }
 }

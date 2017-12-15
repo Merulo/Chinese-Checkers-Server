@@ -11,16 +11,19 @@ package Server.LobbyState;
 public class Open implements State {
     @Override
     public void changeStateNext(LobbyState lobbyState){
-        lobbyState.setState(new ReadyToStart());
+        lobbyState.setState(new Open());
     }
     @Override
     public void changeStatePrev(LobbyState lobbyState){
-        //no previous state
-        return;
+
     }
     @Override
     public void handleLobby(LobbyState lobbyState){
-        //logic here!
+        if (lobbyState.getGame().validatePlayerCount()){
+            if(lobbyState.getGame().validatePlayerReady()){
+                lobbyState.nextPhase();
+            }
+        }
     }
     @Override
     public String getName(){

@@ -17,12 +17,17 @@ public class Game implements NetworkManager {
     private Hub hub;
     //variable with the settings of the game
     private Settings settings;
+    //countdown variable
+    private int countDown = 10;
+    //countdown time variable
+    private long startMillis;
 
     //creates game, sets hub, and gives the game number
     Game(Hub hub, int number){
         players = new ArrayList<>();
-        settings = new Settings("Game: " + Integer.toString(number + 1), number);
+        settings = new Settings(this, "Game: " + Integer.toString(number + 1), number);
         this.hub = hub;
+        startMillis = System.currentTimeMillis();
     }
 
     //adds player to the game, sets the player variables
@@ -88,13 +93,9 @@ public class Game implements NetworkManager {
 
     //returns true if it is possible to join the game
     boolean canJoin(){
-        if(settings.getMaxPlayerNumber() <= players.size()){
-            return false;
-        }
-        //TODO: VERIFY THIS CODE
-        return (settings.getLobbyState().getState() instanceof Open);
+        return settings.getMaxPlayerNumber()>players.size()
+                && (settings.getLobbyState().getState() instanceof Open);
     }
-
 
     //resend messages to other players in current game
     public synchronized void resendMessage(String message){
@@ -108,5 +109,53 @@ public class Game implements NetworkManager {
             }
         }
     }
+
+    void handleLobby(){
+        settings.getLobbyState().handleLobby();
+    }
+
+    public boolean validatePlayerCount(){
+        int playerCount = players.size();
+        return (playerCount == 2 || playerCount == 3 || playerCount == 6);
+    }
+
+    public boolean validatePlayerReady(){
+        for(AbstractPlayer player : players){
+            if (!player.isReady()){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void resetCountdown(){
+        countDown = 10;
+        startMillis = System.currentTimeMillis();
+    }
+
+    public void countDown(){
+        if ((System.currentTimeMillis() - this.startMillis) / 1000.0 > 1) {
+            startMillis = System.currentTimeMillis();
+            countDown--;
+            for (AbstractPlayer player : players) {
+                player.sendMessage("Countdown;" + Integer.toString(countDown) + ";");
+            }
+        }
+    }
+
+    public int getCountDown(){
+        return countDown;
+    }
+
+    public void startGame(){
+        for (AbstractPlayer player : players) {
+                player.sendMessage("Start" + settings.getGeneralData(players.size()) +";");
+        }
+        //TODO: CHOOSE STARTING PLAYER
+        //TODO: SEND STARTING POSITIONS
+        //TODO: SEND STARTING PLAYER INFORMATION
+    }
+
+
 
 }
