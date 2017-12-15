@@ -53,7 +53,7 @@ public class HumanPlayer extends AbstractPlayer {
             handleLeaveMessage();
         }
         //MESSAGE TO RESEND
-        else{
+        else if(type.equals("Msg")){
             handleMessage(message);
         }
     }

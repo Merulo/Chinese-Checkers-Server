@@ -79,7 +79,7 @@ public class Game implements NetworkManager {
         players.remove(client);
         //TODO: VERIFY THIS CODE
         for(AbstractPlayer abstractPlayer : players){
-            abstractPlayer.sendMessage("Remove:" + client.getData() + ";");
+            abstractPlayer.sendMessage("Remove;" + client.getData() + ";");
         }
 
         hub.sendGame(this);
@@ -105,6 +105,7 @@ public class Game implements NetworkManager {
         System.out.println("Sending " + message);
         for(AbstractPlayer player : players){
             if(player.isPlaying()){
+                System.out.println("Sending to " + player.getData());
                 player.sendMessage(message);
             }
         }
@@ -116,7 +117,7 @@ public class Game implements NetworkManager {
 
     public boolean validatePlayerCount(){
         int playerCount = players.size();
-        return (playerCount == 2 || playerCount == 3 || playerCount == 6);
+        return (playerCount == 2 || playerCount == 3 || playerCount == 4|| playerCount == 6);
     }
 
     public boolean validatePlayerReady(){
