@@ -33,4 +33,15 @@ public class MapPoint {
     public int getDistance(MapPoint target){
         return Math.abs(x - target.getX()) + Math.abs(y - target.getY()) - (Math.abs(target.getX() - x - (target.getY() - y) ))/2;
     }
+
+    public boolean areAlined(MapPoint target){
+        int dx = target.getX() - x;
+        int dy = target.getY() - y;
+
+        if (dx == 0 || dy == 0) {
+            return true;
+        }
+        //third axis
+        return (dx == -dy);
+    }
 }

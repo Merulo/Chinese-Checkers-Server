@@ -9,32 +9,28 @@ package Server.LobbyState;
  * No joining allowed
  * Counting down from 10 to 0 to begin game
  */
-public class ReadyToStart implements State {
+public class Full implements State {
     @Override
     public void changeStateNext(LobbyState lobbyState){
-        lobbyState.setState(new Playing());
+        lobbyState.setState(new ReadyToStart());
     }
     @Override
     public void changeStatePrev(LobbyState lobbyState){
-        lobbyState.setState(new Full());
+        lobbyState.setState(new Open());
         lobbyState.getGame().resetCountdown();
     }
     @Override
     public void handleLobby(LobbyState lobbyState){
-        if (!lobbyState.getGame().validatePlayerCount()){
+        if (!lobbyState.getGame().isFull()){
             lobbyState.prevPhase();
         }
-        if(!lobbyState.getGame().validatePlayerReady()){
-            lobbyState.prevPhase();
-        }
-        lobbyState.getGame().countDown();
-        if(lobbyState.getGame().getCountDown() == 0){
-            lobbyState.getGame().startGame();
+        else if(lobbyState.getGame().validatePlayerReady()){
+            lobbyState.nextPhase();
         }
 
     }
     @Override
     public String getName(){
-        return "Ready to start";
+        return "Full";
     }
 }

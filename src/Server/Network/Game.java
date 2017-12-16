@@ -117,20 +117,23 @@ public class Game implements NetworkManager {
 
     public void handleSettings(String message, AbstractPlayer p){
         boolean result = false;
+        String copy = SimpleParser.cut(message);
+        copy = SimpleParser.parse(copy);
+        copy = copy + ";";
+        //System.out.println("TEST: " + copy);
         if(p == players.get(0)){
             result = settings.handleSettingsChange(message);
         }
         else{
-            p.sendMessage(settings.getDetailedData(players.size()));
+            p.sendMessage(copy + Integer.toString(settings.getRecentlyChanged()));
             return;
-            //result = true;
         }
         //TODO: ADD KICKING
 
         if(result) {
             for (AbstractPlayer player : players) {
                 if (p != player)
-                player.sendMessage(settings.getDetailedData(players.size()));
+                player.sendMessage(copy + Integer.toString(settings.getRecentlyChanged()));
             }
             hub.sendGame(this);
         }
@@ -186,6 +189,9 @@ public class Game implements NetworkManager {
         return "<" + new SimpleDateFormat("HH:mm:ss").format(new Date()) + "> ";
     }
 
+    public boolean isFull(){
+        return (settings.getMaxPlayerNumber() == players.size());
+    }
 
 
 }

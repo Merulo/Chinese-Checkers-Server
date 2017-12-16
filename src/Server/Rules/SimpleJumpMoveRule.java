@@ -5,26 +5,24 @@ import Server.Map.MapPoint;
 import java.util.ArrayList;
 
 //allows moving to the adjacent tile if it is free
-public class AdjacentMoveRule extends MoveRule {
+public class SimpleJumpMoveRule extends MoveRule {
 
-    public AdjacentMoveRule(){
-        priority = 1;
+    public SimpleJumpMoveRule(){
+        priority = 10;
         max_usages = 1;
         uses_left = max_usages;
     }
 
     public int checkMove(Map map, ArrayList<MapPoint> mapPoints, int playerID){
         //not enough points
-        if(mapPoints.size() < 2) {
-            return -1;
-        }
-        //no more uses
-        if(uses_left == 0){
+        if(mapPoints.size() < 3) {
             return -1;
         }
 
         MapPoint starting   = mapPoints.get(0);
-        MapPoint ending     = mapPoints.get(1);
+        MapPoint middle     = mapPoints.get(1);
+        MapPoint ending     = mapPoints.get(2);
+
         //field is taken
         if(map.getField(ending).getPlayerOnField() != null){
             return -1;
@@ -33,6 +31,11 @@ public class AdjacentMoveRule extends MoveRule {
         if(!map.getField(ending).getPartOfMap()){
             return -1;
         }
+        if(map.getField(middle).getPlayerOnField() != null){
+            return -1;
+        }
+        //TODO: KEEP ADDING
+
         //distance is 1
         if (starting.getDistance(ending) == 1) {
             uses_left--;
@@ -46,3 +49,4 @@ public class AdjacentMoveRule extends MoveRule {
         return "Ruch na jedno pole obok";
     }
 }
+

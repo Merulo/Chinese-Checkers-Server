@@ -1,5 +1,6 @@
 package Server.LobbyState;
 
+//TODO: UPDATE CONDITIONS
 /**CONDITION: (ONE MUST BE TRUE)
  * Not all players are ready
  * Incorrect number of players
@@ -11,7 +12,7 @@ package Server.LobbyState;
 public class Open implements State {
     @Override
     public void changeStateNext(LobbyState lobbyState){
-        lobbyState.setState(new Open());
+        lobbyState.setState(new Full());
     }
     @Override
     public void changeStatePrev(LobbyState lobbyState){
@@ -19,10 +20,8 @@ public class Open implements State {
     }
     @Override
     public void handleLobby(LobbyState lobbyState){
-        if (lobbyState.getGame().validatePlayerCount()){
-            if(lobbyState.getGame().validatePlayerReady()){
-                lobbyState.nextPhase();
-            }
+        if (lobbyState.getGame().isFull()){
+            lobbyState.nextPhase();
         }
     }
     @Override

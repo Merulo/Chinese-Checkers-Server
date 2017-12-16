@@ -8,15 +8,20 @@ import Server.SimpleParser;
 public class Settings {
     private LobbyState lobbyState;
     private String gameName;
-    private int pawnNumber = 10;
+    private int size = 5;
     private int maxPlayerNumber = 4;
     private int gameNumber;
+    private int recentyChanged;
 
     public Settings(Game game, String name, int gameNumber){
         gameName = name;
         this.gameNumber = gameNumber;
         lobbyState = new LobbyState(game);
-        pawnNumber = 10;
+        size = 5;
+    }
+
+    public int maxPlayerNumber(){
+        return maxPlayerNumber;
     }
 
     public String getGeneralData( int playerCount){
@@ -34,11 +39,15 @@ public class Settings {
         result += gameName + ";";
         result += Integer.toString(playerCount) + ";";
         result += maxPlayerNumber + ";";
-        result += Integer.toString(pawnNumber) + ";";
+        result += Integer.toString(size) + ";";
         result += lobbyState.getState().getName() + ";";
         result += "Nazwa Zasady nr1;";
         result += "Nazwa Zasady nr2;";
         return result;
+    }
+
+    public int getRecentlyChanged(){
+        return recentyChanged;
     }
 
     public int getMaxPlayerNumber(){
@@ -53,14 +62,23 @@ public class Settings {
         message = SimpleParser.cut(message);
         String option = SimpleParser.parse(message);
         String values = SimpleParser.cut(message);
-        //System.out.println("Settings changer: " + option);
         if(option.equals("Players")){
             if(maxPlayerNumber != Integer.parseInt(values)) {
                 maxPlayerNumber = Integer.parseInt(values);
+                recentyChanged = maxPlayerNumber;
                 return true;
             }
             return false;
         }
+        else if(option.equals("Size")){
+            if(size != Integer.parseInt(values)) {
+                size = Integer.parseInt(values);
+                recentyChanged = size;
+                return true;
+            }
+            return false;
+        }
+
 
         return false;
     }
