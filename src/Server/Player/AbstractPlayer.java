@@ -15,6 +15,10 @@ public abstract class AbstractPlayer extends Thread {
     Color color;
     private Boolean ready = false;
 
+    public void setGame(Game game) {
+        this.game = game;
+    }
+
     public abstract void sendMessage(String message);
 
     public boolean isPlaying(){

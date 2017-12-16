@@ -11,7 +11,7 @@ public class Settings {
     private int size = 5;
     private int maxPlayerNumber = 4;
     private int gameNumber;
-    private int recentyChanged;
+    private int recentlyChanged;
 
     public Settings(Game game, String name, int gameNumber){
         gameName = name;
@@ -47,7 +47,7 @@ public class Settings {
     }
 
     public int getRecentlyChanged(){
-        return recentyChanged;
+        return recentlyChanged  ;
     }
 
     public int getMaxPlayerNumber(){
@@ -65,7 +65,7 @@ public class Settings {
         if(option.equals("Players")){
             if(maxPlayerNumber != Integer.parseInt(values)) {
                 maxPlayerNumber = Integer.parseInt(values);
-                recentyChanged = maxPlayerNumber;
+                recentlyChanged = maxPlayerNumber;
                 return true;
             }
             return false;
@@ -73,7 +73,7 @@ public class Settings {
         else if(option.equals("Size")){
             if(size != Integer.parseInt(values)) {
                 size = Integer.parseInt(values);
-                recentyChanged = size;
+                recentlyChanged = size;
                 return true;
             }
             return false;

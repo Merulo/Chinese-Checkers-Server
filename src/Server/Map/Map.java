@@ -15,7 +15,7 @@ public class Map {
             for (int i = 0; i < map.length; i++) {
                 map[i] = new Field[size];
             }
-            //TODO: SETUP MAP
+            //TODO: SETUP MAP IN CORRECT WAY
         }
     }
 

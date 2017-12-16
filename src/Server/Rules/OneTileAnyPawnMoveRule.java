@@ -5,9 +5,9 @@ import Server.Map.MapPoint;
 import java.util.ArrayList;
 
 //allows moving to the adjacent tile if it is free
-public class SimpleJumpMoveRule extends MoveRule {
+public class OneTileAnyPawnMoveRule extends MoveRule {
 
-    public SimpleJumpMoveRule(){
+    public OneTileAnyPawnMoveRule(){
         priority = 10;
         max_usages = 1;
         uses_left = max_usages;
@@ -31,22 +31,22 @@ public class SimpleJumpMoveRule extends MoveRule {
         if(!map.getField(ending).getPartOfMap()){
             return -1;
         }
-        if(map.getField(middle).getPlayerOnField() != null){
+        if(map.getField(middle).getPlayerOnField() == null){
             return -1;
         }
-        //TODO: KEEP ADDING
-
-        //distance is 1
-        if (starting.getDistance(ending) == 1) {
+        if(!starting.areAlined(ending)){
+            return  -1;
+        }
+        if (starting.getDistance(ending) == 2) {
             uses_left--;
-            return 1;
+            return 2;
         }
         return -1;
     }
 
     @Override
     public String getName() {
-        return "Ruch na jedno pole obok";
+        return "Przeskoczenie jednego, dowolnego pionka";
     }
 }
 

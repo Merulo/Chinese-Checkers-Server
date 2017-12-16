@@ -29,10 +29,6 @@ public class HumanPlayer extends AbstractPlayer {
         output.println("WELCOME");
     }
 
-    public void setGame(Game game) {
-        this.game = game;
-    }
-
     private void parseMessage(String message){
         //message is null, removing client
         if(message == null){

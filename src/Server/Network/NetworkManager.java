@@ -1,14 +1,15 @@
 package Server.Network;
 
+import Server.Player.AbstractPlayer;
 import Server.Player.HumanPlayer;
 
 public interface NetworkManager {
 
-    void addPlayer(HumanPlayer player);
+    void addPlayer(AbstractPlayer player);
 
     void removePlayers();
 
-    void enter(HumanPlayer humanPlayer, int number);
+    void enter(AbstractPlayer humanPlayer, int number);
 
 
 }

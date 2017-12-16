@@ -27,7 +27,7 @@ public class Hub extends Thread implements NetworkManager {
 
     //adds player to client list when moving from Lobby to Hub
     @Override
-    public void addPlayer(HumanPlayer player){
+    public void addPlayer(AbstractPlayer player){
         players.add(player);
         sendGameList(player);
         player.setGame(null);
@@ -51,7 +51,7 @@ public class Hub extends Thread implements NetworkManager {
 
     //moves one player from the hub to the game
     @Override
-    public synchronized void enter(HumanPlayer client, int number){
+    public synchronized void enter(AbstractPlayer client, int number){
         if(games.get(number).canJoin()) {
             players.remove(client);
             games.get(number).addPlayer(client);

@@ -26,11 +26,13 @@ public class LobbyState {
     //moves lobby to the next phase
     void nextPhase(){
         state.changeStateNext(this);
+        game.sendDetailedGameData();
     }
 
     //moves lobby to the previous phase
     void prevPhase(){
         state.changeStatePrev(this);
+        game.sendDetailedGameData();
     }
 
     //returns the state of lobby

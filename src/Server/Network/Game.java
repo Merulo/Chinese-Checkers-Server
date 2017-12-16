@@ -36,7 +36,7 @@ public class Game implements NetworkManager {
 
     //adds player to the game, sets the player variables
     @Override
-    public synchronized void addPlayer(HumanPlayer player){
+    public synchronized void addPlayer(AbstractPlayer player){
         player.setGame(this);
         player.sendMessage(settings.getDetailedData(players.size()));
 
@@ -59,7 +59,6 @@ public class Game implements NetworkManager {
         try {
             for(int i = 0; i < players.size(); i++){
                 if(!players.get(i).isPlaying()){
-                    //TODO: VERIFY THIS CODE
                     for(AbstractPlayer abstractPlayer : players){
                         if(abstractPlayer != players.get(i))
                             abstractPlayer.sendMessage( "Remove:" +  players.get(i).getNick() + ";");
@@ -78,10 +77,9 @@ public class Game implements NetworkManager {
 
     //moves the player from game to hub
     @Override
-    public synchronized void enter(HumanPlayer client, int number){
+    public synchronized void enter(AbstractPlayer client, int number){
         System.out.println("MOVING FROM GAME TO HUB");
         players.remove(client);
-        //TODO: VERIFY THIS CODE
         for(AbstractPlayer abstractPlayer : players){
             abstractPlayer.sendMessage("Remove;" + client.getNick() + ";");
         }
@@ -116,26 +114,33 @@ public class Game implements NetworkManager {
     }
 
     public void handleSettings(String message, AbstractPlayer p){
-        boolean result = false;
-        String copy = SimpleParser.cut(message);
-        copy = SimpleParser.parse(copy);
-        copy = copy + ";";
-        //System.out.println("TEST: " + copy);
+        boolean result;
         if(p == players.get(0)){
             result = settings.handleSettingsChange(message);
         }
         else{
-            p.sendMessage(copy + Integer.toString(settings.getRecentlyChanged()));
+            p.sendMessage(settings.getDetailedData(players.size()));
             return;
         }
-        //TODO: ADD KICKING
+        for(int i = 0; i < players.size(); i++){
+            if (i >= settings.getMaxPlayerNumber()){
+                players.get(i).sendMessage("Kick;");
+                enter(players.get(i), 0);
+            }
+        }
 
         if(result) {
             for (AbstractPlayer player : players) {
                 if (p != player)
-                player.sendMessage(copy + Integer.toString(settings.getRecentlyChanged()));
+                player.sendMessage(settings.getDetailedData(players.size()));
             }
             hub.sendGame(this);
+        }
+    }
+
+    public void sendDetailedGameData(){
+        for (AbstractPlayer player : players) {
+            player.sendMessage(settings.getDetailedData(players.size()));
         }
     }
 
