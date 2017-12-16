@@ -139,9 +139,7 @@ public class Game implements NetworkManager {
     }
 
     public void sendDetailedGameData(){
-        for (AbstractPlayer player : players) {
-            player.sendMessage(settings.getDetailedData(players.size()));
-        }
+        hub.sendGame(this);
     }
 
     void handleLobby(){
