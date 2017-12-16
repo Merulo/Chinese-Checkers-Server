@@ -52,6 +52,10 @@ public class HumanPlayer extends AbstractPlayer {
         else if(type.equals("Leave")){
             handleLeaveMessage();
         }
+        //Settings;[...]
+        else if(type.equals("Settings")){
+            handleSettingsMessage(message);
+        }
         //MESSAGE TO RESEND
         else if(type.equals("Msg")){
             handleMessage(message);
@@ -111,8 +115,16 @@ public class HumanPlayer extends AbstractPlayer {
     }
 
     private void handleMessage(String message){
+        message = SimpleParser.cut(message);
         if (game != null){
-            game.resendMessage(message);
+            game.resendMessage(message, this);
+        }
+    }
+
+    private void handleSettingsMessage(String message){
+        if (game != null){
+            System.out.println("Zmieniam ustawienia: " + this.getNick());
+            game.handleSettings(message, this);
         }
     }
 

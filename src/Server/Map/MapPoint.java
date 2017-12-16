@@ -1,26 +1,24 @@
-package Server.Rules;
-
-import java.util.Map;
+package Server.Map;
 
 public class MapPoint {
     private int x;
     private int y;
 
-    MapPoint(int x, int y){
+    public MapPoint(int x, int y){
         this.x = x;
         this.y = y;
     }
 
-    MapPoint(){
+    public MapPoint(){
         x = 0;
         y = 0;
     }
 
-    int getX() {
+    public int getX() {
         return x;
     }
 
-    int getY() {
+    public int getY() {
         return y;
     }
 
@@ -32,7 +30,7 @@ public class MapPoint {
         this.y = y;
     }
 
-    public int metric(MapPoint target){
+    public int getDistance(MapPoint target){
         return Math.abs(x - target.getX()) + Math.abs(y - target.getY()) - (Math.abs(target.getX() - x - (target.getY() - y) ))/2;
     }
 }

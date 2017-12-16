@@ -1,21 +1,16 @@
 package Server.Rules;
 
+import Server.Map.Map;
+import Server.Map.MapPoint;
+
 import java.util.*;
 
 public class MoveDecorator {
-    private int map[][];
     private List<MoveRule> moveRules;
+    private int pawnNumber;
+    private Map map;
 
-    public MoveDecorator(int pawnNumber){
-        //TODO: REPLACE WITH CODE CALCULATED FROM pawnNumber
-        int size = 10;
-        map = new int[size][];
-        for(int i =0; i < map.length; i++){
-            map[i] = new int [size];
-            for(int j =0; j < map[i].length; j++){
-                map[i][j] = -1;
-            }
-        }
+    public MoveDecorator(){
         moveRules = new ArrayList<>();
     }
 
@@ -35,11 +30,25 @@ public class MoveDecorator {
         }
     }
 
+    public void setPawnNumber(int pawnNumber) {
+        this.pawnNumber = pawnNumber;
+    }
+
     private void sortRules() {
         moveRules.sort(Comparator.comparing(MoveRule::getPriority));
     }
 
+    private void checkMap(){
+        if (map == null){
+            map = new Map(pawnNumber);
+            map.setUpMap();
+        }
+    }
+
     public boolean checkMove(ArrayList<MapPoint> mapPoints, int playerID){
+        sortRules();
+        checkMap();
+        resetRules();
 
         while (true){
             boolean changed = false;

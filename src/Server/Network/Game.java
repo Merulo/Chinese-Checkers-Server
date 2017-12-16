@@ -4,10 +4,13 @@ import Server.LobbyState.Open;
 import Server.Player.AbstractPlayer;
 import Server.Player.HumanPlayer;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import Server.Rules.Settings;
 import com.sun.org.apache.bcel.internal.generic.INSTANCEOF;
+import Server.SimpleParser;
 
 //Game/Lobby class
 public class Game implements NetworkManager {
@@ -99,16 +102,37 @@ public class Game implements NetworkManager {
     }
 
     //resend messages to other players in current game
-    public synchronized void resendMessage(String message){
-        if (message == null){
-            return;
-        }
+    public synchronized void resendMessage(String message, AbstractPlayer aplayer){
+        message = SimpleParser.cut(message);
         System.out.println("Sending " + message);
+        String result = "Msg;" + getTimeStamp() + aplayer.getNick() + ": " + message;
+
         for(AbstractPlayer player : players){
             if(player.isPlaying()){
-                System.out.println("Sending to " + player.getData());
-                player.sendMessage(message);
+                System.out.println("Sending to " + player.getNick());
+                player.sendMessage(result);
             }
+        }
+    }
+
+    public void handleSettings(String message, AbstractPlayer p){
+        boolean result = false;
+        if(p == players.get(0)){
+            result = settings.handleSettingsChange(message);
+        }
+        else{
+            p.sendMessage(settings.getDetailedData(players.size()));
+            return;
+            //result = true;
+        }
+        //TODO: ADD KICKING
+
+        if(result) {
+            for (AbstractPlayer player : players) {
+                if (p != player)
+                player.sendMessage(settings.getDetailedData(players.size()));
+            }
+            hub.sendGame(this);
         }
     }
 
@@ -156,6 +180,10 @@ public class Game implements NetworkManager {
         //TODO: CHOOSE STARTING PLAYER
         //TODO: SEND STARTING POSITIONS
         //TODO: SEND STARTING PLAYER INFORMATION
+    }
+
+    private String getTimeStamp(){
+        return "<" + new SimpleDateFormat("HH:mm:ss").format(new Date()) + "> ";
     }
 
 

@@ -1,5 +1,9 @@
 package Server.Rules;
 
+import Server.Map.Field;
+import Server.Map.Map;
+import Server.Map.MapPoint;
+
 import java.util.ArrayList;
 
 abstract public class MoveRule {
@@ -23,10 +27,12 @@ abstract public class MoveRule {
 
     //returns -1 if Rule cannot be applied to first and some other point
     //returns n where n is the point that allows to make move according to that rule
-    public abstract int checkMove(int map[][], ArrayList<MapPoint> mapPoints, int playerID);
+    public abstract int checkMove(Map map, ArrayList<MapPoint> mapPoints, int playerID);
 
     void reset(){
         uses_left = max_usages;
     }
+
+    public abstract String getName();
 
 }

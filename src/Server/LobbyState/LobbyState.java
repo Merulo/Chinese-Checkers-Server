@@ -13,6 +13,11 @@ public class LobbyState {
         state = new ReadyToStart();
     }
 
+    //handles the logic lobby
+    public void handleLobby(){
+        state.handleLobby(this);
+    }
+
     //changes the state of lobby
     void setState(State state) {
         this.state = state;
@@ -26,11 +31,6 @@ public class LobbyState {
     //moves lobby to the previous phase
     void prevPhase(){
         state.changeStatePrev(this);
-    }
-
-    //handles the logic lobby
-    public void handleLobby(){
-        state.handleLobby(this);
     }
 
     //returns the state of lobby

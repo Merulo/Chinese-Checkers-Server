@@ -3,12 +3,13 @@ package Server.Rules;
 
 import Server.LobbyState.LobbyState;
 import Server.Network.Game;
+import Server.SimpleParser;
 
 public class Settings {
     private LobbyState lobbyState;
     private String gameName;
     private int pawnNumber = 10;
-    private int maxPlayerNumber = 6;
+    private int maxPlayerNumber = 4;
     private int gameNumber;
 
     public Settings(Game game, String name, int gameNumber){
@@ -46,5 +47,21 @@ public class Settings {
 
     public LobbyState getLobbyState() {
         return lobbyState;
+    }
+
+    public boolean handleSettingsChange(String message){
+        message = SimpleParser.cut(message);
+        String option = SimpleParser.parse(message);
+        String values = SimpleParser.cut(message);
+        //System.out.println("Settings changer: " + option);
+        if(option.equals("Players")){
+            if(maxPlayerNumber != Integer.parseInt(values)) {
+                maxPlayerNumber = Integer.parseInt(values);
+                return true;
+            }
+            return false;
+        }
+
+        return false;
     }
 }
