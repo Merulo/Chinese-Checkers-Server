@@ -2,6 +2,10 @@ package Server.Network;
 
 import Server.Player.AbstractPlayer;
 import Server.Player.HumanPlayer;
+import Server.Rules.AdjacentMoveRule;
+import Server.Rules.MoveRule;
+import Server.Rules.OneTileAnyPawnMoveRule;
+import Server.Rules.TwoTilesNoPawnsRule;
 
 import java.net.Socket;
 import java.util.ArrayList;
@@ -15,6 +19,9 @@ public class Hub extends Thread implements NetworkManager {
     private List<Game> games;
     //list of players IN HUB
     private List<AbstractPlayer> players;
+    //global move rule list
+    //TODO: FLYWEIGHT DESIGN PATTERN?
+    private List<MoveRule> moveRules;
 
     //creates the lists and adds 10 games
     Hub(){
@@ -23,6 +30,13 @@ public class Hub extends Thread implements NetworkManager {
         for(int i = 0; i < 10; i++){
             games.add(new Game(this, i));
         }
+
+        moveRules = new ArrayList<>();
+        moveRules.add(new AdjacentMoveRule());
+        moveRules.add(new OneTileAnyPawnMoveRule());
+        moveRules.add(new TwoTilesNoPawnsRule());
+
+
     }
 
     //adds player to client list when moving from Lobby to Hub
@@ -100,5 +114,7 @@ public class Hub extends Thread implements NetworkManager {
         }
     }
 
-
+    public List<MoveRule> getMoveRules() {
+        return moveRules;
+    }
 }

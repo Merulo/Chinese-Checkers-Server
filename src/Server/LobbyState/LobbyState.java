@@ -5,6 +5,7 @@ import Server.Network.Game;
 public class LobbyState {
     //current state of lobby
     private State state;
+    //the game the lobbyState belongs to
     private Game game;
 
     //newly created lobby is open
@@ -38,6 +39,7 @@ public class LobbyState {
     //returns the state of lobby
     public State getState(){return state;}
 
+    //return the game
     public Game getGame() {
         return game;
     }

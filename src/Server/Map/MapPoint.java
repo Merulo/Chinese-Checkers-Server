@@ -1,24 +1,29 @@
 package Server.Map;
 
+//TODO: COPY MY CODE FROM CLIENT - MAP
+
 public class MapPoint {
+    //coordinates of the point
     private int x;
     private int y;
 
+    //sets the x and y
     public MapPoint(int x, int y){
         this.x = x;
         this.y = y;
     }
 
+    //default constructor
     public MapPoint(){
         x = 0;
         y = 0;
     }
 
-    public int getX() {
+    int getX() {
         return x;
     }
 
-    public int getY() {
+    int getY() {
         return y;
     }
 
@@ -30,11 +35,12 @@ public class MapPoint {
         this.y = y;
     }
 
+    //calculates distance according to our metric
     public int getDistance(MapPoint target){
         return Math.abs(x - target.getX()) + Math.abs(y - target.getY()) - (Math.abs(target.getX() - x - (target.getY() - y) ))/2;
     }
 
-    public boolean areAlined(MapPoint target){
+    public boolean areAligned(MapPoint target){
         int dx = target.getX() - x;
         int dy = target.getY() - y;
 

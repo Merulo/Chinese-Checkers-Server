@@ -38,7 +38,7 @@ public class TwoTilesNoPawnsRule extends MoveRule {
         if(map.getField(middle2).getPlayerOnField() != null){
             return -1;
         }
-        if(!starting.areAlined(ending)){
+        if(!starting.areAligned(ending)){
             return  -1;
         }
         if (starting.getDistance(ending) == 3) {
@@ -51,6 +51,11 @@ public class TwoTilesNoPawnsRule extends MoveRule {
     @Override
     public String getName() {
         return "Przeskoczenie dwoch pustych pol";
+    }
+
+    @Override
+    public MoveRule makeCopy(){
+        return new TwoTilesNoPawnsRule();
     }
 }
 

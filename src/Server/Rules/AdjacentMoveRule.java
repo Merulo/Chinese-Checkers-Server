@@ -13,6 +13,7 @@ public class AdjacentMoveRule extends MoveRule {
         uses_left = max_usages;
     }
 
+    @Override
     public int checkMove(Map map, ArrayList<MapPoint> mapPoints, int playerID){
         //not enough points
         if(mapPoints.size() < 2) {
@@ -44,5 +45,10 @@ public class AdjacentMoveRule extends MoveRule {
     @Override
     public String getName() {
         return "Ruch na jedno pole obok";
+    }
+
+    @Override
+    public MoveRule makeCopy(){
+        return new AdjacentMoveRule();
     }
 }

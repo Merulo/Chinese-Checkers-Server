@@ -1,13 +1,18 @@
 package Server.Map;
 
-public class Map {
-    private int pawnNumber;
-    private Field map[][];
+//TODO: COPY MY CODE FROM CLIENT - MAP
 
+public class Map {
+    //pawns count
+    private int pawnNumber;
+    //array with map
+    private Field map[][];
+    //set the pawn number
     public Map(int pawnNumber){
         this.pawnNumber = pawnNumber;
     }
 
+    //create map if null
     public void setUpMap(){
         if (map == null) {
             int size = calculateRowsNumber();
@@ -19,6 +24,7 @@ public class Map {
         }
     }
 
+    //returns the field under given point
     public Field getField(MapPoint mapPoint){
         if (mapPoint != null){
             return map[mapPoint.getX()][mapPoint.getY()];
@@ -26,6 +32,7 @@ public class Map {
         return null;
     }
 
+    //calculates the necessary number of rows
     private int calculateRowsNumber(){
         int pawns = pawnNumber;
         int row = 0;

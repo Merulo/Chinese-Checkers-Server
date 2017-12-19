@@ -34,7 +34,7 @@ public class OneTileAnyPawnMoveRule extends MoveRule {
         if(map.getField(middle).getPlayerOnField() == null){
             return -1;
         }
-        if(!starting.areAlined(ending)){
+        if(!starting.areAligned(ending)){
             return  -1;
         }
         if (starting.getDistance(ending) == 2) {
@@ -47,6 +47,11 @@ public class OneTileAnyPawnMoveRule extends MoveRule {
     @Override
     public String getName() {
         return "Przeskoczenie jednego, dowolnego pionka";
+    }
+
+    @Override
+    public MoveRule makeCopy(){
+        return new OneTileAnyPawnMoveRule();
     }
 }
 

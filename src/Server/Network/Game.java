@@ -2,6 +2,7 @@ package Server.Network;
 
 import Server.LobbyState.Open;
 import Server.Player.AbstractPlayer;
+import Server.Player.ComputerPlayer;
 import Server.Player.HumanPlayer;
 
 import java.text.SimpleDateFormat;
@@ -29,7 +30,7 @@ public class Game implements NetworkManager {
     //creates game, sets hub, and gives the game number
     Game(Hub hub, int number){
         players = new ArrayList<>();
-        settings = new Settings(this, "Game: " + Integer.toString(number + 1), number);
+        settings = new Settings(hub, this, "Game: " + Integer.toString(number + 1), number);
         this.hub = hub;
         startMillis = System.currentTimeMillis();
     }
@@ -196,5 +197,23 @@ public class Game implements NetworkManager {
         return (settings.getMaxPlayerNumber() == players.size());
     }
 
+    public void addBot(String message){
+        players.add(new ComputerPlayer());
+
+        for (AbstractPlayer player : players) {
+            player.sendMessage(settings.getDetailedData(players.size()));
+        }
+    }
+
+    public void removeBot(String message){
+        for(AbstractPlayer abstractPlayer : players){
+            if (abstractPlayer.getNick().equals(message)){
+                players.remove(abstractPlayer);
+            }
+        }
+        for (AbstractPlayer player : players) {
+            player.sendMessage(settings.getDetailedData(players.size()));
+        }
+    }
 
 }

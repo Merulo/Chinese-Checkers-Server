@@ -3,7 +3,10 @@ package Server.Rules;
 
 import Server.LobbyState.LobbyState;
 import Server.Network.Game;
+import Server.Network.Hub;
 import Server.SimpleParser;
+
+import java.util.ArrayList;
 
 public class Settings {
     private LobbyState lobbyState;
@@ -11,11 +14,15 @@ public class Settings {
     private int size = 5;
     private int maxPlayerNumber = 4;
     private int gameNumber;
-    private int recentlyChanged;
+    private Hub hub;
+    private MoveDecorator moveDecorator;
 
-    public Settings(Game game, String name, int gameNumber){
+    public Settings(Hub hub, Game game, String name, int gameNumber){
         gameName = name;
+        this.hub = hub;
         this.gameNumber = gameNumber;
+        moveDecorator = new MoveDecorator();
+        moveDecorator.setPawnNumber(sizeToPawnCount());
         lobbyState = new LobbyState(game);
         size = 5;
     }
@@ -41,13 +48,22 @@ public class Settings {
         result += maxPlayerNumber + ";";
         result += Integer.toString(size) + ";";
         result += lobbyState.getState().getName() + ";";
-        result += "Nazwa Zasady nr1;";
-        result += "Nazwa Zasady nr2;";
-        return result;
-    }
 
-    public int getRecentlyChanged(){
-        return recentlyChanged  ;
+        StringBuilder builder = new StringBuilder();
+        builder.append("RuleOn;");
+
+        for(MoveRule moveRule : moveDecorator.getMoveRules()){
+            builder.append(moveRule.getName()).append(";");
+        }
+
+        builder.append("RuleOff;");
+
+        for(MoveRule moveRule : hub.getMoveRules()){
+            if(!builder.toString().contains(moveRule.getName()))
+                builder.append(moveRule.getName()).append(";");
+        }
+        result += builder.toString();
+        return result;
     }
 
     public int getMaxPlayerNumber(){
@@ -65,7 +81,6 @@ public class Settings {
         if(option.equals("Players")){
             if(maxPlayerNumber != Integer.parseInt(values)) {
                 maxPlayerNumber = Integer.parseInt(values);
-                recentlyChanged = maxPlayerNumber;
                 return true;
             }
             return false;
@@ -73,13 +88,37 @@ public class Settings {
         else if(option.equals("Size")){
             if(size != Integer.parseInt(values)) {
                 size = Integer.parseInt(values);
-                recentlyChanged = size;
+                moveDecorator.setPawnNumber(sizeToPawnCount());
                 return true;
             }
             return false;
         }
+        else if(option.equals("RuleOn")){
+            for(MoveRule moveRule : hub.getMoveRules()){
+                if(moveRule.getName().equals(values)){
+                    moveDecorator.addRule(moveRule.makeCopy());
+                    return true;
+                }
+            }
+        }
+        else if(option.equals("RuleOff")){
+            for(MoveRule moveRule : hub.getMoveRules()){
+                if(moveRule.getName().equals(values)){
+                    moveDecorator.removeRule(moveRule.makeCopy());
+                    return true;
+                }
+            }
+        }
 
 
         return false;
+    }
+
+    private int sizeToPawnCount(){
+        int count = 0;
+        for(int i = 0; i < size; i++){
+            count+= i;
+        }
+        return count;
     }
 }

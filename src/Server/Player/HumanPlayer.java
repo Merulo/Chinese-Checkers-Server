@@ -29,6 +29,26 @@ public class HumanPlayer extends AbstractPlayer {
         output.println("WELCOME");
     }
 
+    @Override
+    public void sendMessage(String message){
+        output.println(message);
+    }
+
+    @Override
+    public void run() {
+        try {
+            System.out.println("HUMAN PLAYER STARTING" );
+            while (playing) {
+                String string = input.readLine();
+                System.out.println("GAME MESSAGE: " + string);
+                parseMessage(string);
+            }
+        }
+        catch (IOException e) {
+            System.out.println("Player died: " + e);
+        }
+    }
+
     private void parseMessage(String message){
         //message is null, removing client
         if(message == null){
@@ -56,27 +76,16 @@ public class HumanPlayer extends AbstractPlayer {
         else if(type.equals("Msg")){
             handleMessage(message);
         }
-    }
-
-    @Override
-    public void sendMessage(String message){
-        output.println(message);
-    }
-
-    @Override
-    public void run() {
-        try {
-            System.out.println("HUMAN PLAYER STARTING" );
-            while (playing) {
-                String string = input.readLine();
-                System.out.println("GAME MESSAGE: " + string);
-                parseMessage(string);
-            }
+        //MESSAGE TO RESEND
+        else if(type.equals("AddBot")){
+            game.addBot(message);
         }
-        catch (IOException e) {
-            System.out.println("Player died: " + e);
+        //MESSAGE TO RESEND
+        else if(type.equals("RemoveBot")){
+            game.removeBot(message);
         }
     }
+
 
     private void handleNullMessage(){
         System.out.println("QUITTING");

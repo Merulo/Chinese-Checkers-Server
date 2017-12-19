@@ -13,7 +13,6 @@ public class Open implements State {
     @Override
     public void changeStateNext(LobbyState lobbyState){
         lobbyState.setState(new Full());
-        //lobbyState.getGame().sendState();
     }
     @Override
     public void changeStatePrev(LobbyState lobbyState){

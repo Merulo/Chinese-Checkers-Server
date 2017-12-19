@@ -18,10 +18,17 @@ public class MoveDecorator {
         moveRules.add(moveRule);
     }
 
-    public void removeRule(MoveRule moveRule){
-        //TODO: ADD REMOVING RULES
-        //THIS DOESN'T WORK
-        //moveRules.remove(moveRule);
+    public List<MoveRule> getMoveRules() {
+        return moveRules;
+    }
+
+    public void removeRule(MoveRule moveRuleToRemove){
+        //TODO: TEST THIS
+        for(MoveRule moveRule : moveRules){
+            if (moveRule.getClass().equals(moveRuleToRemove.getClass())){
+                moveRules.remove(moveRule);
+            }
+        }
     }
 
     private void resetRules(){
