@@ -1,13 +1,7 @@
 package Server.Player;
 
-import Server.Network.Hub;
 import javafx.scene.paint.Color;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
 import java.util.Random;
 
 public class ComputerPlayer extends AbstractPlayer {
@@ -30,7 +24,7 @@ public class ComputerPlayer extends AbstractPlayer {
         try {
             while (playing) {
                 this.wait();
-                //game.parseMyMove() //something like this
+                //lobby.parseMyMove() //something like this
             }
         }
         catch (Exception ex){

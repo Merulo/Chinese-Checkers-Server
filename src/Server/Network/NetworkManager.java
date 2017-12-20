@@ -1,7 +1,6 @@
 package Server.Network;
 
 import Server.Player.AbstractPlayer;
-import Server.Player.HumanPlayer;
 
 public interface NetworkManager {
 
@@ -10,6 +9,8 @@ public interface NetworkManager {
     void removePlayers();
 
     void enter(AbstractPlayer humanPlayer, int number);
+
+    void parse(AbstractPlayer abstractPlayer, String message);
 
 
 }

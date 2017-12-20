@@ -17,14 +17,14 @@ public class Full implements State {
     @Override
     public void changeStatePrev(LobbyState lobbyState){
         lobbyState.setState(new Open());
-        lobbyState.getGame().resetCountdown();
+        lobbyState.getLobby().resetCountdown();
     }
     @Override
     public void handleLobby(LobbyState lobbyState){
-        if (!lobbyState.getGame().isFull()){
+        if (!lobbyState.getLobby().isFull()){
             lobbyState.prevPhase();
         }
-        else if(lobbyState.getGame().validatePlayerReady()){
+        else if(lobbyState.getLobby().validatePlayerReady()){
             lobbyState.nextPhase();
         }
 

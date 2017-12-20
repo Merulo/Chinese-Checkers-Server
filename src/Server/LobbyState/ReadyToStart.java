@@ -17,19 +17,21 @@ public class ReadyToStart implements State {
     @Override
     public void changeStatePrev(LobbyState lobbyState){
         lobbyState.setState(new Full());
-        lobbyState.getGame().resetCountdown();
+        lobbyState.getLobby().resetCountdown();
     }
     @Override
     public void handleLobby(LobbyState lobbyState){
-        if (!lobbyState.getGame().validatePlayerCount()){
+        if (!lobbyState.getLobby().validatePlayerCount()){
             lobbyState.prevPhase();
         }
-        if(!lobbyState.getGame().validatePlayerReady()){
+        if(!lobbyState.getLobby().validatePlayerReady()){
             lobbyState.prevPhase();
         }
-        lobbyState.getGame().countDown();
-        if(lobbyState.getGame().getCountDown() == 0){
-            lobbyState.getGame().startGame();
+        lobbyState.getLobby().countDown();
+        if(lobbyState.getLobby().getCountDown() == 0){
+            lobbyState.getLobby().startGame();
+            lobbyState.setGame(lobbyState.getLobby().getGame());
+            lobbyState.nextPhase();
         }
 
     }

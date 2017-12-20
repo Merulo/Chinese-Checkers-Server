@@ -20,7 +20,7 @@ public class Open implements State {
     }
     @Override
     public void handleLobby(LobbyState lobbyState){
-        if (lobbyState.getGame().isFull()){
+        if (lobbyState.getLobby().isFull()){
             lobbyState.nextPhase();
         }
     }

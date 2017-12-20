@@ -1,16 +1,19 @@
 package Server.LobbyState;
 
 import Server.Network.Game;
+import Server.Network.Lobby;
 
 public class LobbyState {
     //current state of lobby
     private State state;
-    //the game the lobbyState belongs to
+    //the lobby the lobbyState belongs to
+    private Lobby lobby;
+    //the game that lobbyState is playing
     private Game game;
 
     //newly created lobby is open
-    public LobbyState(Game game){
-        this.game = game;
+    public LobbyState(Lobby lobby){
+        this.lobby = lobby;
         state = new ReadyToStart();
     }
 
@@ -27,20 +30,25 @@ public class LobbyState {
     //moves lobby to the next phase
     void nextPhase(){
         state.changeStateNext(this);
-        game.sendDetailedGameData();
+        lobby.sendDetailedGameData();
     }
 
     //moves lobby to the previous phase
     void prevPhase(){
         state.changeStatePrev(this);
-        game.sendDetailedGameData();
+        lobby.sendDetailedGameData();
     }
 
     //returns the state of lobby
     public State getState(){return state;}
 
-    //return the game
-    public Game getGame() {
-        return game;
+    //return the lobby
+    Lobby getLobby() {
+        return lobby;
+    }
+
+    //sets game
+    public void setGame(Game game) {
+        this.game = game;
     }
 }

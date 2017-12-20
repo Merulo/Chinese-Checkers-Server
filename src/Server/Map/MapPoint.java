@@ -19,10 +19,12 @@ public class MapPoint {
         y = 0;
     }
 
+    //gets x
     int getX() {
         return x;
     }
 
+    //gets y
     int getY() {
         return y;
     }

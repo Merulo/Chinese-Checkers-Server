@@ -1,6 +1,5 @@
 package Server.Player;
 
-import Server.Network.Game;
 import Server.Network.Hub;
 import Server.SimpleParser;
 import javafx.scene.paint.Color;
@@ -14,10 +13,9 @@ import java.net.Socket;
 public class HumanPlayer extends AbstractPlayer {
     private BufferedReader input;
     private PrintWriter output;
-    private Hub hub;
 
     public HumanPlayer(Socket socket, Hub hub) {
-        this.hub = hub;
+        networkManager = hub;
         color = new Color(Math.random(), Math.random(), Math.random() ,0.5);
         try {
             input = new BufferedReader( new InputStreamReader(socket.getInputStream()));
@@ -56,81 +54,33 @@ public class HumanPlayer extends AbstractPlayer {
             return;
         }
         String type = SimpleParser.parse(message);
-        //Join;LobbyNumber
-        if(type.equals("Join")){
-            handleJoinMessage(message);
-        }
-        //Nick;PlayerNick
-        else if(type.equals("Nick")){
-            handleNickMessage(message);
-        }
-        //Leave;
-        else if(type.equals("Leave")){
-            handleLeaveMessage();
-        }
-        //Settings;[...]
-        else if(type.equals("Settings")){
-            handleSettingsMessage(message);
-        }
-        //MESSAGE TO RESEND
-        else if(type.equals("Msg")){
-            handleMessage(message);
-        }
-        //MESSAGE TO RESEND
-        else if(type.equals("AddBot")){
-            game.addBot(message);
-        }
-        //MESSAGE TO RESEND
-        else if(type.equals("RemoveBot")){
-            game.removeBot(message);
+
+        switch (type){
+            case "Nick": {
+                handleNickMessage(message);
+                break;
+            }
+            case "Start":
+                ready = true;
+                break;
+            case "Cancel":
+                ready = false;
+                break;
+            default:{
+                networkManager.parse(this, message);
+            }
         }
     }
-
 
     private void handleNullMessage(){
         System.out.println("QUITTING");
         playing = false;
-        if (game != null) {
-            game.removePlayers();
-        }
-        else{
-            hub.removePlayers();
-        }
-    }
-
-    private void handleJoinMessage(String message){
-        message = SimpleParser.cut(message);
-        int number = Integer.parseInt(SimpleParser.parse(message));
-        hub.enter(this, number);
+        networkManager.removePlayers();
     }
 
     private void handleNickMessage(String message){
         message = SimpleParser.cut(message);
         nick = message;
-    }
-
-    private void handleLeaveMessage(){
-        if(game != null) {
-            game.enter(this, 0);
-        }
-        else if (hub != null){
-            playing = false;
-            hub.removePlayers();
-        }
-    }
-
-    private void handleMessage(String message){
-        message = SimpleParser.cut(message);
-        if (game != null){
-            game.resendMessage(message, this);
-        }
-    }
-
-    private void handleSettingsMessage(String message){
-        if (game != null){
-            System.out.println("Zmieniam ustawienia: " + this.getNick());
-            game.handleSettings(message, this);
-        }
     }
 
 

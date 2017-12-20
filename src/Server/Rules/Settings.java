@@ -2,11 +2,9 @@ package Server.Rules;
 //TODO: FIND COZY PLACE FOR THIS CLASS
 
 import Server.LobbyState.LobbyState;
-import Server.Network.Game;
+import Server.Network.Lobby;
 import Server.Network.Hub;
 import Server.SimpleParser;
-
-import java.util.ArrayList;
 
 public class Settings {
     private LobbyState lobbyState;
@@ -17,18 +15,22 @@ public class Settings {
     private Hub hub;
     private MoveDecorator moveDecorator;
 
-    public Settings(Hub hub, Game game, String name, int gameNumber){
+    public Settings(Hub hub, Lobby lobby, String name, int gameNumber){
         gameName = name;
         this.hub = hub;
         this.gameNumber = gameNumber;
         moveDecorator = new MoveDecorator();
         moveDecorator.setPawnNumber(sizeToPawnCount());
-        lobbyState = new LobbyState(game);
+        lobbyState = new LobbyState(lobby);
         size = 5;
     }
 
     public int maxPlayerNumber(){
         return maxPlayerNumber;
+    }
+
+    public MoveDecorator getMoveDecorator(){
+        return moveDecorator;
     }
 
     public String getGeneralData( int playerCount){
@@ -78,39 +80,41 @@ public class Settings {
         message = SimpleParser.cut(message);
         String option = SimpleParser.parse(message);
         String values = SimpleParser.cut(message);
-        if(option.equals("Players")){
-            if(maxPlayerNumber != Integer.parseInt(values)) {
-                maxPlayerNumber = Integer.parseInt(values);
-                return true;
-            }
-            return false;
-        }
-        else if(option.equals("Size")){
-            if(size != Integer.parseInt(values)) {
-                size = Integer.parseInt(values);
-                moveDecorator.setPawnNumber(sizeToPawnCount());
-                return true;
-            }
-            return false;
-        }
-        else if(option.equals("RuleOn")){
-            for(MoveRule moveRule : hub.getMoveRules()){
-                if(moveRule.getName().equals(values)){
-                    moveDecorator.addRule(moveRule.makeCopy());
+        switch (option){
+            case "Players":{
+                if(maxPlayerNumber != Integer.parseInt(values)) {
+                    maxPlayerNumber = Integer.parseInt(values);
                     return true;
                 }
+                return false;
             }
-        }
-        else if(option.equals("RuleOff")){
-            for(MoveRule moveRule : hub.getMoveRules()){
-                if(moveRule.getName().equals(values)){
-                    moveDecorator.removeRule(moveRule.makeCopy());
+            case "Size":{
+                if(size != Integer.parseInt(values)) {
+                    size = Integer.parseInt(values);
+                    moveDecorator.setPawnNumber(sizeToPawnCount());
                     return true;
                 }
+                return false;
+            }
+            case "RuleOn":{
+                for(MoveRule moveRule : hub.getMoveRules()){
+                    if(moveRule.getName().equals(values)){
+                        moveDecorator.addRule(moveRule.makeCopy());
+                        return true;
+                    }
+                }
+                return false;
+            }
+            case "RuleOff":{
+                for(MoveRule moveRule : hub.getMoveRules()){
+                    if(moveRule.getName().equals(values)){
+                        moveDecorator.removeRule(moveRule.makeCopy());
+                        return true;
+                    }
+                }
+                return false;
             }
         }
-
-
         return false;
     }
 

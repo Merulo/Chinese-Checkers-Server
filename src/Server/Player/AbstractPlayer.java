@@ -1,22 +1,18 @@
 package Server.Player;
 
-import Server.Network.Game;
-
-import com.sun.org.apache.xpath.internal.operations.Bool;
+import Server.Network.NetworkManager;
 import javafx.scene.paint.Color;
-
-import java.util.concurrent.ArrayBlockingQueue;
 
 public abstract class AbstractPlayer extends Thread {
 
-    Game game;
     Boolean playing = true;
     String nick;
     Color color;
-    private Boolean ready = false;
+    Boolean ready = false;
+    NetworkManager networkManager;
 
-    public void setGame(Game game) {
-        this.game = game;
+    public void setNetworkManager(NetworkManager networkManager) {
+        this.networkManager = networkManager;
     }
 
     public abstract void sendMessage(String message);
@@ -39,6 +35,10 @@ public abstract class AbstractPlayer extends Thread {
     }
 
     public boolean isReady(){return ready;}
+
+    public void setPlaying(boolean value){
+        playing = value;
+    }
 
 
 

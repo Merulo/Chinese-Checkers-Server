@@ -6,29 +6,30 @@ import Server.Rules.AdjacentMoveRule;
 import Server.Rules.MoveRule;
 import Server.Rules.OneTileAnyPawnMoveRule;
 import Server.Rules.TwoTilesNoPawnsRule;
+import Server.SimpleParser;
 
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
 //Hub class, extends thread
-//this allows to handle the games!
+//this allows to handle the lobbies!
 
 public class Hub extends Thread implements NetworkManager {
-    //list of games opened on status
-    private List<Game> games;
+    //list of lobbies opened on status
+    private List<Lobby> lobbies;
     //list of players IN HUB
     private List<AbstractPlayer> players;
     //global move rule list
     //TODO: FLYWEIGHT DESIGN PATTERN?
     private List<MoveRule> moveRules;
 
-    //creates the lists and adds 10 games
+    //creates the lists and adds 10 lobbies
     Hub(){
-        games = new ArrayList<>();
+        lobbies = new ArrayList<>();
         players = new ArrayList<>();
         for(int i = 0; i < 10; i++){
-            games.add(new Game(this, i));
+            lobbies.add(new Lobby(this, i));
         }
 
         moveRules = new ArrayList<>();
@@ -44,7 +45,7 @@ public class Hub extends Thread implements NetworkManager {
     public void addPlayer(AbstractPlayer player){
         players.add(player);
         sendGameList(player);
-        player.setGame(null);
+        player.setNetworkManager(this);
     }
 
     //removes the client form the list
@@ -66,12 +67,30 @@ public class Hub extends Thread implements NetworkManager {
     //moves one player from the hub to the game
     @Override
     public synchronized void enter(AbstractPlayer client, int number){
-        if(games.get(number).canJoin()) {
+        if(lobbies.get(number).canJoin()) {
             players.remove(client);
-            games.get(number).addPlayer(client);
+            lobbies.get(number).addPlayer(client);
         }
         else{
             client.sendMessage("Full;");
+        }
+    }
+
+    @Override
+    public synchronized void parse(AbstractPlayer abstractPlayer, String message){
+        String type = SimpleParser.parse(message);
+        switch (type) {
+            case "Join": {
+                message = SimpleParser.cut(message);
+                int number = Integer.parseInt(SimpleParser.parse(message));
+                enter(abstractPlayer, number);
+                break;
+            }
+            case "Leave":{
+                abstractPlayer.setPlaying(false);
+                removePlayers();
+                break;
+            }
         }
     }
 
@@ -83,17 +102,17 @@ public class Hub extends Thread implements NetworkManager {
         sendGameList(players.get(players.size() - 1));
     }
 
-    //sends one game data to all the players
-    synchronized void sendGame(Game game){
+    //sends one lobby data to all the players
+    synchronized void sendGame(Lobby lobby){
         for (AbstractPlayer client : players){
-            client.sendMessage(game.getGameData());
+            client.sendMessage(lobby.getGameData());
         }
     }
 
-    //sends the game data about all games to one client
+    //sends the game data about all lobbies to one client
     private synchronized void sendGameList(AbstractPlayer client){
-        for (Game game : games){
-            client.sendMessage(game.getGameData());
+        for (Lobby lobby : lobbies){
+            client.sendMessage(lobby.getGameData());
         }
     }
 
@@ -108,8 +127,8 @@ public class Hub extends Thread implements NetworkManager {
             catch (Exception ex){
                 ex.printStackTrace();
             }
-            for(Game game : games){
-                game.handleLobby();
+            for(Lobby lobby : lobbies){
+                lobby.handleLobby();
             }
         }
     }
