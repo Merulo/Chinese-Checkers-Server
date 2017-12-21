@@ -96,6 +96,10 @@ public class Lobby implements NetworkManager {
                 handleSettings(message, abstractPlayer);
                 break;
             }
+            case "Leave":{
+                enter(abstractPlayer, 0);
+                break;
+            }
             case "Msg":{
                 message = SimpleParser.cut(message);
                 resendMessage(message, abstractPlayer);
