@@ -110,11 +110,28 @@ public class Lobby implements NetworkManager {
                 break;
             }
             case "RemoveBot":{
-                removeBot(message);
+                removeAbstractPlayer(message);
                 break;
+            }
+            case "Kick":{
+                removePlayer(message, abstractPlayer);
             }
 
         }
+    }
+
+    private void removePlayer(String message, AbstractPlayer abstractPlayer){
+        if (abstractPlayer == players.get(0)){
+            message = SimpleParser.cut(message);
+            int i = Integer.parseInt(message);
+            i--;
+            if(i < players.size() && i != 0) {
+                System.out.println("TEST");
+                removeAbstractPlayer(players.get(i).getNick());
+            }
+        }
+
+
     }
 
     //returns game data which can be send to other players
@@ -131,55 +148,54 @@ public class Lobby implements NetworkManager {
     //resend messages to other players in current game
     private synchronized void resendMessage(String message, AbstractPlayer aplayer){
         message = SimpleParser.cut(message);
-        System.out.println("Sending " + message);
         String result = "Msg;" + getTimeStamp() + aplayer.getNick() + ": " + message;
 
         for(AbstractPlayer player : players){
             if(player.isPlaying()){
-                System.out.println("Sending to " + player.getNick());
                 player.sendMessage(result);
             }
         }
     }
 
+    //handles settings changes
     private void handleSettings(String message, AbstractPlayer p){
         boolean result;
         if(p == players.get(0)){
-            result = settings.handleSettingsChange(message);
+            result = settings.handleSettingsChange(message, players.size());
         }
         else{
             p.sendMessage(settings.getDetailedData(players.size()));
             return;
         }
-        for(int i = 0; i < players.size(); i++){
-            if (i >= settings.getMaxPlayerNumber()){
-                players.get(i).sendMessage("Kick;");
-                enter(players.get(i), 0);
-            }
-        }
 
         if(result) {
             for (AbstractPlayer player : players) {
-                if (p != player)
                 player.sendMessage(settings.getDetailedData(players.size()));
             }
             hub.sendGame(this);
         }
+        else {
+            p.sendMessage(settings.getDetailedData(players.size()));
+        }
     }
 
+    //sends detailed game data
     public void sendDetailedGameData(){
         hub.sendGame(this);
     }
 
+    //handles lobby
     void handleLobby(){
         settings.getLobbyState().handleLobby();
     }
 
+    //validates the player count
     public boolean validatePlayerCount(){
         int playerCount = players.size();
         return (playerCount == 2 || playerCount == 3 || playerCount == 4|| playerCount == 6);
     }
 
+    //validates readiness of player
     public boolean validatePlayerReady(){
         /*
         FUTURE USAGE
@@ -192,11 +208,13 @@ public class Lobby implements NetworkManager {
         return players.size() > 0 && players.get(0).isReady();
     }
 
+    //resets countdown
     public void resetCountdown(){
         countDown = 10;
         startMillis = System.currentTimeMillis();
     }
 
+    //counts down
     public void countDown(){
         if ((System.currentTimeMillis() - this.startMillis) / 1000.0 > 1) {
             startMillis = System.currentTimeMillis();
@@ -207,10 +225,12 @@ public class Lobby implements NetworkManager {
         }
     }
 
+    //returns countdown
     public int getCountDown(){
         return countDown;
     }
 
+    //cares the game instance
     public void startGame(){
         for (AbstractPlayer player : players) {
                 player.sendMessage("Start;TBA;");
@@ -221,30 +241,58 @@ public class Lobby implements NetworkManager {
         //TODO: SEND STARTING PLAYER INFORMATION
     }
 
+    //returns the current time stamp
     private String getTimeStamp(){
         return "<" + new SimpleDateFormat("HH:mm:ss").format(new Date()) + "> ";
     }
 
+    //returns true if lobby is full
     public boolean isFull(){
         return (settings.getMaxPlayerNumber() == players.size());
     }
 
+    //adds bot
     private void addBot(){
-        players.add(new ComputerPlayer());
+        AbstractPlayer player = new ComputerPlayer();
 
-        for (AbstractPlayer player : players) {
-            player.sendMessage(settings.getDetailedData(players.size()));
+        for(AbstractPlayer abstractPlayer : players){
+            abstractPlayer.sendMessage(player.getData());
         }
+        players.add(player);
+        hub.sendGame(this);
     }
 
-    private void removeBot(String message){
-        for(AbstractPlayer abstractPlayer : players){
-            if (abstractPlayer.getNick().equals(message)){
-                players.remove(abstractPlayer);
+    //removes player
+    private void removeAbstractPlayer(String message){
+        boolean removed = false;
+        String nick = "";
+        for (AbstractPlayer abstractPlayer : players) {
+            if (abstractPlayer.getNick().equals(message)) {
+                if (abstractPlayer instanceof ComputerPlayer) {
+                    nick = abstractPlayer.getNick();
+                    players.remove(abstractPlayer);
+                    hub.sendGame(this);
+                    removed = true;
+                    break;
+                }
+                else {
+                    //removes normal players from lobby
+                    nick = abstractPlayer.getNick();
+                    enter(abstractPlayer, 0);
+                    removed = true;
+                    break;
+                }
             }
         }
-        for (AbstractPlayer player : players) {
-            player.sendMessage(settings.getDetailedData(players.size()));
+        System.out.println("Lista graczy:");
+        for(int i =0; i < players.size(); i++ ){
+            System.out.println(i +": " +players.get(i).getNick());
+        }
+
+        if(removed) {
+            for (AbstractPlayer player : players) {
+                player.sendMessage("Remove;" + nick + ";");
+            }
         }
     }
 

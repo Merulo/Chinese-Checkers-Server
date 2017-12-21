@@ -53,16 +53,21 @@ public class Settings {
 
         StringBuilder builder = new StringBuilder();
         builder.append("RuleOn;");
+        int i = 0;
 
-        for(MoveRule moveRule : moveDecorator.getMoveRules()){
-            builder.append(moveRule.getName()).append(";");
+        for(MoveRule moveRule : hub.getMoveRules()){
+            if(builder.toString().contains(moveRule.getName()))
+                builder.append(Integer.toString(i)).append(";").append(moveRule.getName()).append(";");
+            i++;
         }
 
+        i = 0;
         builder.append("RuleOff;");
 
         for(MoveRule moveRule : hub.getMoveRules()){
             if(!builder.toString().contains(moveRule.getName()))
-                builder.append(moveRule.getName()).append(";");
+                builder.append(Integer.toString(i)).append(";").append(moveRule.getName()).append(";");
+            i++;
         }
         result += builder.toString();
         return result;
@@ -76,13 +81,13 @@ public class Settings {
         return lobbyState;
     }
 
-    public boolean handleSettingsChange(String message){
+    public boolean handleSettingsChange(String message, int count){
         message = SimpleParser.cut(message);
         String option = SimpleParser.parse(message);
         String values = SimpleParser.cut(message);
         switch (option){
             case "Players":{
-                if(maxPlayerNumber != Integer.parseInt(values)) {
+                if(Integer.parseInt(values) >= count) {
                     maxPlayerNumber = Integer.parseInt(values);
                     return true;
                 }
