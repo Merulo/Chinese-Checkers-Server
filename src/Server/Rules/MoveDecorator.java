@@ -10,11 +10,11 @@ public class MoveDecorator {
     private int pawnNumber;
     private Map map;
 
-    public MoveDecorator(){
+    MoveDecorator(){
         moveRules = new ArrayList<>();
     }
 
-    public void addRule(MoveRule moveRule){
+    void addRule(MoveRule moveRule){
         moveRules.add(moveRule);
     }
 
@@ -22,8 +22,7 @@ public class MoveDecorator {
         return moveRules;
     }
 
-    public void removeRule(MoveRule moveRuleToRemove){
-        //TODO: TEST THIS
+    void removeRule(MoveRule moveRuleToRemove){
         for(MoveRule moveRule : moveRules){
             if (moveRule.getClass().equals(moveRuleToRemove.getClass())){
                 moveRules.remove(moveRule);
@@ -37,24 +36,24 @@ public class MoveDecorator {
         }
     }
 
-    public void setPawnNumber(int pawnNumber) {
+    void setPawnNumber(int pawnNumber) {
         this.pawnNumber = pawnNumber;
+    }
+
+    public int getPawnNumber(){
+        return pawnNumber;
     }
 
     private void sortRules() {
         moveRules.sort(Comparator.comparing(MoveRule::getPriority));
     }
 
-    private void checkMap(){
-        if (map == null){
-            map = new Map(pawnNumber);
-            map.setUpMap();
-        }
+    public void setMap(Map map){
+        this.map = map;
     }
 
     public boolean checkMove(ArrayList<MapPoint> mapPoints, int playerID){
         sortRules();
-        checkMap();
         resetRules();
 
         while (true){

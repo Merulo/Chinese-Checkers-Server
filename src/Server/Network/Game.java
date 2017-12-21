@@ -5,6 +5,7 @@ import Server.Player.AbstractPlayer;
 import Server.Rules.MoveDecorator;
 import Server.SimpleParser;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Game implements NetworkManager {
@@ -21,10 +22,20 @@ public class Game implements NetworkManager {
     //strategy factory
     //etc
 
-    Game(List<AbstractPlayer> players, Hub hub, Lobby lobby){
+    Game(ArrayList<AbstractPlayer> players, Hub hub, Lobby lobby, MoveDecorator moveDecorator){
         this.hub = hub;
         this.lobby = lobby;
         this.players = players;
+        this.moveDecorator = moveDecorator;
+        map = new Map(moveDecorator.getPawnNumber());
+        moveDecorator.setMap(map);
+        map.setPlayers(players);
+        map.setUpMap();
+        map.printMap();
+
+        //TODO: CHOOSE STARTING PLAYER
+        //TODO: SEND STARTING POSITIONS
+        //TODO: SEND STARTING PLAYER INFORMATION
     }
 
 

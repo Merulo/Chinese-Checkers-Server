@@ -2,15 +2,23 @@ package Server.Map;
 
 //TODO: COPY MY CODE FROM CLIENT - MAP
 
+import Server.Player.AbstractPlayer;
+
+import java.util.ArrayList;
+
 public class Map {
     //pawns count
     private int pawnNumber;
     //array with map
     private Field map[][];
+    //list with players
+    private ArrayList<AbstractPlayer> players;
+
     //set the pawn number
     public Map(int pawnNumber){
         this.pawnNumber = pawnNumber;
     }
+
 
     //create map if null
     public void setUpMap(){
@@ -28,9 +36,10 @@ public class Map {
             for(int i = rows; i < size - rows; i++){
                 for(int j = rows; j < size - rows; j++){
                     map[i][j].setPartOfMap(true);
-                    map[i][j].setPlayerOnField(null);
+                    map[i][j].setPlayerOnField(null );
                 }
             }
+            setUpStartingPosition();
 
             //TODO: SETUP MAP IN CORRECT WAY
         }
@@ -42,6 +51,10 @@ public class Map {
             return map[mapPoint.getX()][mapPoint.getY()];
         }
         return null;
+    }
+
+    public void setPlayers(ArrayList<AbstractPlayer> players) {
+        this.players = players;
     }
 
     //calculates the necessary number of rows
@@ -56,6 +69,7 @@ public class Map {
     }
 
     public void printMap(){
+        //TODO: REPLACE WITH FOREACH
         for(int i =0; i < map.length; i++){
             for(int j = 0; j < map[i].length; j++){
                 if(map[i][j].getPartOfMap()){
@@ -69,8 +83,36 @@ public class Map {
         }
     }
 
-    private void setCorners(int i){
+    private void setUpStartingPosition(){
+        int i = 6/players.size();
+        if(players.size() == 4){
+            fillCorner(1, players.get(0));
+            fillCorner(2, players.get(1));
+            fillCorner(4, players.get(2));
+            fillCorner(5, players.get(3));
+        }
+        else{
+           int counter = 0;
+           int x = 0;
+           do{
+               fillCorner(counter, players.get(x));
+               x++;
+               counter+= i;
+           }while (counter < 6);
+        }
 
+    }
+    private void fillCorner(int option, AbstractPlayer player){
+        int rows = calculateRowsNumber();
+        System.out.println("TESTING" + option);
+        if(option == 5) {
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < rows - i; j++) {
+                    map[i + rows][j + rows].setPartOfMap(true);
+                    map[i + rows][j + rows].setPlayerOnField(player);
+                }
+            }
+        }
     }
 
 }

@@ -16,7 +16,7 @@ public class ComputerPlayer extends AbstractPlayer {
 
     @Override
     public void sendMessage(String message){
-        System.out.println("TEST");
+        //System.out.println("TEST");
     }
 
     @Override

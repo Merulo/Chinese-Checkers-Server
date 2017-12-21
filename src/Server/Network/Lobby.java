@@ -7,14 +7,13 @@ import Server.Player.ComputerPlayer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import Server.Rules.Settings;
 import Server.SimpleParser;
 
 //Lobby/Lobby class
 public class Lobby implements NetworkManager {
     //list of players connected to the game
-    volatile private List<AbstractPlayer> players;
+    volatile private ArrayList<AbstractPlayer> players;
     //Hub variable
     private Hub hub;
     //variable with the settings of the game
@@ -72,6 +71,7 @@ public class Lobby implements NetworkManager {
         catch (Exception ex){
             ex.printStackTrace();
         }
+        removeAdminBots();
         hub.sendGame(this);
     }
 
@@ -84,6 +84,7 @@ public class Lobby implements NetworkManager {
             abstractPlayer.sendMessage("Remove;" + client.getNick() + ";");
         }
 
+        removeAdminBots();
         hub.sendGame(this);
         hub.addPlayer(client);
     }
@@ -126,12 +127,23 @@ public class Lobby implements NetworkManager {
             int i = Integer.parseInt(message);
             i--;
             if(i < players.size() && i != 0) {
-                System.out.println("TEST");
                 removeAbstractPlayer(players.get(i).getNick());
             }
         }
+    }
 
-
+    private void removeAdminBots(){
+        for(AbstractPlayer player : players){
+            if (player instanceof ComputerPlayer){
+                players.remove(player);
+                for(AbstractPlayer player1 : players){
+                    player1.sendMessage("Remove;" + player.getNick());
+                }
+            }
+            else{
+                return;
+            }
+        }
     }
 
     //returns game data which can be send to other players
@@ -235,10 +247,7 @@ public class Lobby implements NetworkManager {
         for (AbstractPlayer player : players) {
                 player.sendMessage("Start;TBA;");
         }
-        game = new Game(players, hub, this);
-        //TODO: CHOOSE STARTING PLAYER
-        //TODO: SEND STARTING POSITIONS
-        //TODO: SEND STARTING PLAYER INFORMATION
+        game = new Game(players, hub, this, settings.getMoveDecorator());
     }
 
     //returns the current time stamp
@@ -253,6 +262,10 @@ public class Lobby implements NetworkManager {
 
     //adds bot
     private void addBot(){
+        if(settings.getMaxPlayerNumber() == players.size()){
+            return;
+        }
+
         AbstractPlayer player = new ComputerPlayer();
 
         for(AbstractPlayer abstractPlayer : players){
@@ -277,16 +290,13 @@ public class Lobby implements NetworkManager {
                 }
                 else {
                     //removes normal players from lobby
+                    abstractPlayer.sendMessage("Leave;");
                     nick = abstractPlayer.getNick();
                     enter(abstractPlayer, 0);
                     removed = true;
                     break;
                 }
             }
-        }
-        System.out.println("Lista graczy:");
-        for(int i =0; i < players.size(); i++ ){
-            System.out.println(i +": " +players.get(i).getNick());
         }
 
         if(removed) {
