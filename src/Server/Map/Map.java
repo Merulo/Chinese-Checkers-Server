@@ -15,11 +15,23 @@ public class Map {
     //create map if null
     public void setUpMap(){
         if (map == null) {
-            int size = calculateRowsNumber();
+            int rows = calculateRowsNumber();
+            int size = rows*4 + 1;
             map = new Field[size][];
             for (int i = 0; i < map.length; i++) {
                 map[i] = new Field[size];
+                for(int j = 0; j < size; j++){
+                    map[i][j] = new Field();
+                }
             }
+
+            for(int i = rows; i < size - rows; i++){
+                for(int j = rows; j < size - rows; j++){
+                    map[i][j].setPartOfMap(true);
+                    map[i][j].setPlayerOnField(null);
+                }
+            }
+
             //TODO: SETUP MAP IN CORRECT WAY
         }
     }
@@ -41,6 +53,24 @@ public class Map {
             pawns = pawns - row;
         }
         return row;
+    }
+
+    public void printMap(){
+        for(int i =0; i < map.length; i++){
+            for(int j = 0; j < map[i].length; j++){
+                if(map[i][j].getPartOfMap()){
+                    System.out.print("O");
+                }
+                else{
+                    System.out.print("X");
+                }
+            }
+            System.out.println("");
+        }
+    }
+
+    private void setCorners(int i){
+
     }
 
 }

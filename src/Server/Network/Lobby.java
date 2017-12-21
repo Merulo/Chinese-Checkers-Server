@@ -210,7 +210,7 @@ public class Lobby implements NetworkManager {
 
     //resets countdown
     public void resetCountdown(){
-        countDown = 10;
+        countDown = 3;
         startMillis = System.currentTimeMillis();
     }
 

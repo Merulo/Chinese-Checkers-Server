@@ -1,6 +1,8 @@
 package Server.Network;
 
+import Server.Map.Map;
 import Server.Player.AbstractPlayer;
+import Server.Rules.MoveDecorator;
 import Server.SimpleParser;
 
 import java.util.List;
@@ -13,7 +15,9 @@ public class Game implements NetworkManager {
     //the main lobby
     private Lobby lobby;
     //map
-    //ruleDecorator
+    private Map map;
+    //MoveDecorator
+    private MoveDecorator moveDecorator;
     //strategy factory
     //etc
 

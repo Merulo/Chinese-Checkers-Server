@@ -60,7 +60,7 @@ public class HumanPlayer extends AbstractPlayer {
                 handleNickMessage(message);
                 break;
             }
-            case "Start":
+            case "Ready":
                 ready = true;
                 break;
             case "Cancel":
