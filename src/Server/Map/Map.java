@@ -1,7 +1,5 @@
 package Server.Map;
 
-//TODO: COPY MY CODE FROM CLIENT - MAP
-
 import Server.Player.AbstractPlayer;
 
 import java.util.ArrayList;
@@ -40,8 +38,6 @@ public class Map {
                 }
             }
             setUpStartingPosition();
-
-            //TODO: SETUP MAP IN CORRECT WAY
         }
     }
 
@@ -69,10 +65,9 @@ public class Map {
     }
 
     public void printMap(){
-        //TODO: REPLACE WITH FOREACH
-        for(int i =0; i < map.length; i++){
-            for(int j = 0; j < map[i].length; j++){
-                if(map[i][j].getPartOfMap()){
+        for(Field fieldArray[] : map){
+            for(Field field : fieldArray){
+                if(field.getPartOfMap()){
                     System.out.print("O");
                 }
                 else{
@@ -105,14 +100,66 @@ public class Map {
     private void fillCorner(int option, AbstractPlayer player){
         int rows = calculateRowsNumber();
         System.out.println("TESTING" + option);
-        if(option == 5) {
-            for (int i = 0; i < rows; i++) {
-                for (int j = 0; j < rows - i; j++) {
-                    map[i + rows][j + rows].setPartOfMap(true);
-                    map[i + rows][j + rows].setPlayerOnField(player);
+        switch (option){
+            case 0:{
+                for(int i = 0; i < rows; i++){
+                    for(int j = 0; j < rows - i; j++) {
+                        map[rows - i - 1][rows - j + rows * 2].setPartOfMap(true);
+                        map[rows - i - 1][rows - j + rows * 2].setPlayerOnField(player);
+
+                    }
                 }
+                break;
+            }
+            case 1:{
+                for (int i = 0; i < rows; i++) {
+                    for (int j = 0; j < rows - i; j++) {
+                        map[i + rows][j + rows *3 + 1].setPartOfMap(true);
+                        map[i + rows][j + rows *3 + 1].setPlayerOnField(player);
+                    }
+                }
+                break;
+            }
+            case 2:{
+                for(int i = 0; i < rows; i++){
+                    for(int j = 0; j < rows - i; j++) {
+                        map[rows - i + rows * 2][rows - j + rows * 2].setPartOfMap(true);
+                        map[rows - i + rows * 2][rows - j + rows * 2].setPlayerOnField(player);
+
+                    }
+                }
+                break;
+            }
+            case 3:{
+                for (int i = 0; i < rows; i++) {
+                    for (int j = 0; j < rows - i; j++) {
+                        map[i + rows * 3 + 1][j + rows].setPartOfMap(true);
+                        map[i + rows * 3 + 1][j + rows].setPlayerOnField(player);
+                    }
+                }
+                break;
+            }
+            case 4:{
+                for(int i = 0; i < rows; i++){
+                    for(int j = 0; j < rows - i; j++) {
+                        map[rows - i + rows * 2][rows - j - 1].setPartOfMap(true);
+                        map[rows - i + rows * 2][rows - j - 1].setPlayerOnField(player);
+
+                    }
+                }
+                break;
+            }
+            case 5: {
+                for (int i = 0; i < rows; i++) {
+                    for (int j = 0; j < rows - i; j++) {
+                        map[i + rows][j + rows].setPartOfMap(true);
+                        map[i + rows][j + rows].setPlayerOnField(player);
+                    }
+                }
+                break;
             }
         }
+
     }
 
 }

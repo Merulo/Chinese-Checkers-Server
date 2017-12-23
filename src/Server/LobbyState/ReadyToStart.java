@@ -1,9 +1,7 @@
 package Server.LobbyState;
 
-//TODO: UPDATE CONDITIONS
 /**CONDITION: (ALL MUST BE TRUE)
- * All players are ready
- * Correct number of players
+ * Admin player pressed start
  * BEHAVIOUR:
  * No changes allowed
  * No joining allowed

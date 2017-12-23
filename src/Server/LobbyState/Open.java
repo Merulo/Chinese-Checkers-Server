@@ -1,13 +1,10 @@
 package Server.LobbyState;
 
-//TODO: UPDATE CONDITIONS
 /**CONDITION: (ONE MUST BE TRUE)
- * Not all players are ready
- * Incorrect number of players
+ * Lobby is not full
  * BEHAVIOUR:
  * Allow changing settings
- * Allow adding bots
- * Allow new players if there is space
+ * Allow new players
 */
 public class Open implements State {
     @Override

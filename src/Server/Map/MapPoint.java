@@ -1,7 +1,5 @@
 package Server.Map;
 
-//TODO: COPY MY CODE FROM CLIENT - MAP
-
 public class MapPoint {
     //coordinates of the point
     private int x;

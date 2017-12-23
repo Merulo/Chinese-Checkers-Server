@@ -21,7 +21,6 @@ public class Hub extends Thread implements NetworkManager {
     //list of players IN HUB
     private List<AbstractPlayer> players;
     //global move rule list
-    //TODO: FLYWEIGHT DESIGN PATTERN?
     private List<MoveRule> moveRules;
 
     //creates the lists and adds 10 lobbies
@@ -121,7 +120,6 @@ public class Hub extends Thread implements NetworkManager {
     public void run(){
         while(true){
             try {
-                //TODO: REMOVE THIS PART WHEN UNNECESSARY
                 Thread.sleep(200);
             }
             catch (Exception ex){

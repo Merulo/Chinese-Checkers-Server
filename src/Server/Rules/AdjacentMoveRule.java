@@ -2,6 +2,8 @@ package Server.Rules;
 
 import Server.Map.Map;
 import Server.Map.MapPoint;
+import Server.Player.AbstractPlayer;
+
 import java.util.ArrayList;
 
 //allows moving to the adjacent tile if it is free
@@ -14,7 +16,7 @@ public class AdjacentMoveRule extends MoveRule {
     }
 
     @Override
-    public int checkMove(Map map, ArrayList<MapPoint> mapPoints, int playerID){
+    public int checkMove(Map map, ArrayList<MapPoint> mapPoints, AbstractPlayer abstractPlayer){
         //not enough points
         if(mapPoints.size() < 2) {
             return -1;

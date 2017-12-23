@@ -2,8 +2,6 @@ package Server.Map;
 
 import Server.Player.AbstractPlayer;
 
-//TODO: COPY MY CODE FROM CLIENT - MAP
-
 public class Field {
 
     //value determining whether this field is part of the game map

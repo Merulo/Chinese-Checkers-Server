@@ -2,6 +2,7 @@ package Server.Rules;
 
 import Server.Map.Map;
 import Server.Map.MapPoint;
+import Server.Player.AbstractPlayer;
 
 import java.util.ArrayList;
 
@@ -17,16 +18,13 @@ abstract public class MoveRule {
 
     //returns -1 if Rule cannot be applied to first and some other point
     //returns n where n is the point that allows to make move according to that rule
-    public abstract int checkMove(Map map, ArrayList<MapPoint> mapPoints, int playerID);
+    public abstract int checkMove(Map map, ArrayList<MapPoint> mapPoints, AbstractPlayer abstractPlayer);
 
     //getters, setters
-    public int getPriority(){
+    int getPriority(){
         return priority;
     }
 
-    public boolean canUse(){
-        return (uses_left>0);
-    }
     void reset(){
         uses_left = max_usages;
     }

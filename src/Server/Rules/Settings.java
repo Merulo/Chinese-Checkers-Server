@@ -1,7 +1,7 @@
 package Server.Rules;
-//TODO: FIND COZY PLACE FOR THIS CLASS
 
 import Server.LobbyState.LobbyState;
+import Server.LobbyState.ReadyToStart;
 import Server.Network.Lobby;
 import Server.Network.Hub;
 import Server.SimpleParser;
@@ -85,6 +85,11 @@ public class Settings {
         message = SimpleParser.cut(message);
         String option = SimpleParser.parse(message);
         String values = SimpleParser.cut(message);
+
+        if (lobbyState.getState() instanceof ReadyToStart){
+            return false;
+        }
+
         switch (option){
             case "Players":{
                 if(Integer.parseInt(values) >= count) {

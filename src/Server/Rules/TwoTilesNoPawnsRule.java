@@ -2,6 +2,8 @@ package Server.Rules;
 
 import Server.Map.Map;
 import Server.Map.MapPoint;
+import Server.Player.AbstractPlayer;
+
 import java.util.ArrayList;
 
 //allows moving to the adjacent tile if it is free
@@ -13,7 +15,7 @@ public class TwoTilesNoPawnsRule extends MoveRule {
         uses_left = max_usages;
     }
 
-    public int checkMove(Map map, ArrayList<MapPoint> mapPoints, int playerID){
+    public int checkMove(Map map, ArrayList<MapPoint> mapPoints, AbstractPlayer abstractPlayer){
         //not enough points
         if(mapPoints.size() < 4) {
             return -1;

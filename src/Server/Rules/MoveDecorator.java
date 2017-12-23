@@ -2,6 +2,7 @@ package Server.Rules;
 
 import Server.Map.Map;
 import Server.Map.MapPoint;
+import Server.Player.AbstractPlayer;
 
 import java.util.*;
 
@@ -26,6 +27,7 @@ public class MoveDecorator {
         for(MoveRule moveRule : moveRules){
             if (moveRule.getClass().equals(moveRuleToRemove.getClass())){
                 moveRules.remove(moveRule);
+                return;
             }
         }
     }
@@ -52,20 +54,19 @@ public class MoveDecorator {
         this.map = map;
     }
 
-    public boolean checkMove(ArrayList<MapPoint> mapPoints, int playerID){
+    public boolean checkMove(ArrayList<MapPoint> mapPoints, AbstractPlayer abstractPlayer){
         sortRules();
         resetRules();
 
         while (true){
             boolean changed = false;
             for(MoveRule moveRule : moveRules){
-                int result = moveRule.checkMove(map, mapPoints, playerID);
+                int result = moveRule.checkMove(map, mapPoints, abstractPlayer);
 
                 //TODO: TEST THIS
                 if( result == mapPoints.size()){
                     return true;
                 }
-                //TODO: TEST THIS
                 if( result != -1){
                     mapPoints.subList(0, result).clear();
                     changed = true;

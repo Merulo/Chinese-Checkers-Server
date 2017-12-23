@@ -18,8 +18,10 @@ public class Lobby implements NetworkManager {
     private Hub hub;
     //variable with the settings of the game
     private Settings settings;
+    //max countdown
+    private final int maxCountDown = 3;
     //countdown variable
-    private int countDown = 3;
+    private int countDown = maxCountDown;
     //countdown time variable
     private long startMillis;
     //the game variable
@@ -133,15 +135,15 @@ public class Lobby implements NetworkManager {
     }
 
     private void removeAdminBots(){
-        for(AbstractPlayer player : players){
-            if (player instanceof ComputerPlayer){
-                players.remove(player);
-                for(AbstractPlayer player1 : players){
-                    player1.sendMessage("Remove;" + player.getNick());
+        if(players.size() > 0) {
+            if (players.get(0) instanceof ComputerPlayer) {
+                AbstractPlayer computer = players.get(0);
+                players.remove(computer);
+
+                for(AbstractPlayer player : players){
+                    player.sendMessage("Remove;" + computer.getNick());
                 }
-            }
-            else{
-                return;
+                removeAdminBots();
             }
         }
     }
@@ -158,9 +160,9 @@ public class Lobby implements NetworkManager {
     }
 
     //resend messages to other players in current game
-    private synchronized void resendMessage(String message, AbstractPlayer aplayer){
+    private synchronized void resendMessage(String message, AbstractPlayer abstractPlayer){
         message = SimpleParser.cut(message);
-        String result = "Msg;" + getTimeStamp() + aplayer.getNick() + ": " + message;
+        String result = "Msg;" + getTimeStamp() + abstractPlayer.getNick() + ": " + message;
 
         for(AbstractPlayer player : players){
             if(player.isPlaying()){
@@ -222,7 +224,7 @@ public class Lobby implements NetworkManager {
 
     //resets countdown
     public void resetCountdown(){
-        countDown = 3;
+        countDown = maxCountDown;
         startMillis = System.currentTimeMillis();
     }
 
@@ -248,6 +250,10 @@ public class Lobby implements NetworkManager {
                 player.sendMessage("Start;TBA;");
         }
         game = new Game(players, hub, this, settings.getMoveDecorator());
+
+        for (AbstractPlayer player : players) {
+            player.setNetworkManager(game);
+        }
     }
 
     //returns the current time stamp

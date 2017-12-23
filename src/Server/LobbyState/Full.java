@@ -1,13 +1,10 @@
 package Server.LobbyState;
 
-//TODO: UPDATE CONDITIONS
 /**CONDITION: (ALL MUST BE TRUE)
- * All players are ready
- * Correct number of players
+ * The lobby is full
  * BEHAVIOUR:
- * No changes allowed
  * No joining allowed
- * Counting down from 10 to 0 to begin game
+ * Settings can be changed
  */
 public class Full implements State {
     @Override
