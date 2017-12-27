@@ -3,6 +3,7 @@ package Server.Network;
 import Server.Map.Map;
 import Server.Map.MapPoint;
 import Server.Player.AbstractPlayer;
+import Server.Player.ComputerPlayer;
 import Server.Rules.MoveDecorator;
 import Server.SimpleParser;
 
@@ -26,9 +27,6 @@ public class Game implements NetworkManager {
     //current player
     private AbstractPlayer currentPlayer;
 
-    //strategy factory
-    //etc
-
     Game(ArrayList<AbstractPlayer> players, Hub hub, Lobby lobby, MoveDecorator moveDecorator){
         this.hub = hub;
         this.lobby = lobby;
@@ -39,6 +37,12 @@ public class Game implements NetworkManager {
         map.setPlayers(players);
         map.setUpMap();
         currentPlayer = players.get(new Random().nextInt(players.size()));
+
+        for(AbstractPlayer player : this.players){
+          if (player instanceof ComputerPlayer){
+              ((ComputerPlayer)player).setMoveDecorator(moveDecorator);
+          }
+        }
     }
 
 
@@ -86,7 +90,7 @@ public class Game implements NetworkManager {
     public synchronized void parse(AbstractPlayer abstractPlayer, String message){
         String type = SimpleParser.parse(message);
         switch (type) {
-            case "Move": {
+            case "Moves": {
                 parseMoveMessage(message, abstractPlayer);
                 break;
             }
@@ -121,23 +125,48 @@ public class Game implements NetworkManager {
     private void parseMoveMessage(String message, AbstractPlayer abstractPlayer){
         if(abstractPlayer != currentPlayer){
             abstractPlayer.sendMessage("NotYourTurn;");
+            abstractPlayer.sendMessage("But you can still move, since this is BETA");
         }
 
         ArrayList<MapPoint> mapPoints = new ArrayList<>();
         message = SimpleParser.cut(message);
+        MapPoint first;
+        MapPoint last;
+
 
         while (!message.isEmpty()){
             String point = SimpleParser.parse(message);
             message = SimpleParser.cut(message);
-            int x = Integer.parseInt(SimpleParser.parse(point, ","));
+            int y = Integer.parseInt(SimpleParser.parse(point, ","));
             point = SimpleParser.cut(point, ",");
-            int y = Integer.parseInt(point);
+            int x = Integer.parseInt(point);
             System.out.println("New point in list: (" + x + "," + y + ")");
+            mapPoints.add(new MapPoint(x, y));
 
         }
         boolean result =  moveDecorator.checkMove(mapPoints, abstractPlayer);
-        //TODO: RESULT == TRUE SEND THE MOVE TO ALL PLAYERS
+
+        System.out.println("BOOLEAN: " + result);
+        if(result){
+            //TODO: RESULT == TRUE SEND THE MOVE TO ALL PLAYERS
+            //TODO: RESULT == TRUE CHECK IF PLAYER HAS WON
+            first = mapPoints.get(0).copy();
+            last = mapPoints.get(mapPoints.size() - 1).copy();
+
+            String tmp = "Move;";
+            tmp+=Integer.toString(first.getY()) + "," + Integer.toString(first.getX()) + ";";
+            tmp+=Integer.toString(last.getY()) + "," + Integer.toString(last.getX()) + ";";
+
+            for (AbstractPlayer player : players){
+                player.sendMessage( tmp);
+            }
+        }
+        else{
+            abstractPlayer.sendMessage("IncorrectMove;");
+        }
+
         //TODO: RESULT == FALSE SEND INFO TO abstractPlayer
+
 
     }
 

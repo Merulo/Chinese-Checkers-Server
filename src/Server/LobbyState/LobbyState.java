@@ -22,6 +22,14 @@ public class LobbyState {
         state.handleLobby(this);
     }
 
+    //sets game
+    public void setGame(Game game) {
+        this.game = game;
+    }
+
+    //returns the state of lobby
+    public State getState(){return state;}
+
     //changes the state of lobby
     void setState(State state) {
         this.state = state;
@@ -39,16 +47,8 @@ public class LobbyState {
         lobby.sendDetailedGameData();
     }
 
-    //returns the state of lobby
-    public State getState(){return state;}
-
     //return the lobby
     Lobby getLobby() {
         return lobby;
-    }
-
-    //sets game
-    public void setGame(Game game) {
-        this.game = game;
     }
 }

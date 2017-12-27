@@ -18,12 +18,16 @@ public class MapPoint {
     }
 
     //gets x
-    int getX() {
+    public int getX() {
         return x;
     }
 
+    public MapPoint copy(){
+        return new MapPoint(x, y);
+    }
+
     //gets y
-    int getY() {
+    public int getY() {
         return y;
     }
 

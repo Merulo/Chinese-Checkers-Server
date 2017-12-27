@@ -15,7 +15,7 @@ public class SimpleParser {
         if (message.contains(delimiter))
                 if(message.indexOf(delimiter) + 1 < message.length())
             return message.substring(message.indexOf(delimiter) + 1);
-        return message;
+        return "";
     }
     public static String cut(String message){
         return cut(message, ";");

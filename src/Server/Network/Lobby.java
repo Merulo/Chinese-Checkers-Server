@@ -162,7 +162,15 @@ public class Lobby implements NetworkManager {
     //resend messages to other players in current game
     private synchronized void resendMessage(String message, AbstractPlayer abstractPlayer){
         message = SimpleParser.cut(message);
-        String result = "Msg;" + getTimeStamp() + abstractPlayer.getNick() + ": " + message;
+        String result = "Msg;" + getTimeStamp();
+        if (abstractPlayer == null){
+            result+= "Server";
+        }
+        else{
+            result += abstractPlayer.getNick();
+        }
+
+        result+= ": " + message;
 
         for(AbstractPlayer player : players){
             if(player.isPlaying()){
@@ -211,15 +219,17 @@ public class Lobby implements NetworkManager {
 
     //validates readiness of player
     public boolean validatePlayerReady(){
-        /*
-        FUTURE USAGE
-        for(AbstractPlayer player : players){
-            if (!player.isReady()){
+        if(players.size() > 0 && players.get(0).isReady()) {
+            if (settings.getMoveDecorator().getMoveRules().size() == 0) {
+                resendMessage("Select more rules!", null);
+                players.get(0).setReady(false);
+                players.get(0).sendMessage("Cancel");
                 return false;
             }
+            return true;
         }
-        */
-        return players.size() > 0 && players.get(0).isReady();
+
+        return false;
     }
 
     //resets countdown

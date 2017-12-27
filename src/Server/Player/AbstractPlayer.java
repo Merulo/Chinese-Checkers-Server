@@ -21,6 +21,8 @@ public abstract class AbstractPlayer extends Thread {
         return playing;
     }
 
+    public void setReady(boolean value){ready = value;}
+
     public String getData(){
         String result = "PlayerList;";
         result+=nick + ";";

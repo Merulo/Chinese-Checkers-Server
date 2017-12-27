@@ -1,11 +1,15 @@
 package Server.Player;
 
+import Server.ComputerStrategy.Strategy;
+import Server.ComputerStrategy.StrategyFactory;
+import Server.Map.Map;
+import Server.Rules.MoveDecorator;
 import javafx.scene.paint.Color;
 
 import java.util.Random;
 
 public class ComputerPlayer extends AbstractPlayer {
-    //TODO: ADD STRATEGY
+    MoveDecorator moveDecorator;
 
     public ComputerPlayer() {
         color = new Color(Math.random(), Math.random(), Math.random() ,0.5);
@@ -19,16 +23,19 @@ public class ComputerPlayer extends AbstractPlayer {
         //System.out.println("TEST");
     }
 
+    public void doMove(){
+        StrategyFactory strategyFactory = StrategyFactory.getStrategyFactor();
+        Strategy strategy = strategyFactory.getStrategy(nick);
+        String move = strategy.getMove(moveDecorator, this);
+        networkManager.parse(this, move);
+    }
+
     @Override
     public void run() {
-        try {
-            while (playing) {
-                this.wait();
-                //lobby.parseMyMove() //something like this
-            }
-        }
-        catch (Exception ex){
-            ex.printStackTrace();
-        }
+        //no need to run computer player as thread
+    }
+
+    public void setMoveDecorator(MoveDecorator moveDecorator) {
+        this.moveDecorator = moveDecorator;
     }
 }

@@ -15,7 +15,7 @@ public class OneTileAnyPawnMoveRule extends MoveRule {
         uses_left = max_usages;
     }
 
-    public int checkMove(Map map, ArrayList<MapPoint> mapPoints, AbstractPlayer abstractPlayer){
+    public int checkMove(Map map, ArrayList<MapPoint> mapPoints, AbstractPlayer abstractPlayer, boolean moveApplied){
         //not enough points
         if(mapPoints.size() < 3) {
             return -1;
@@ -39,11 +39,19 @@ public class OneTileAnyPawnMoveRule extends MoveRule {
         if(!starting.areAligned(ending)){
             return  -1;
         }
-        if (starting.getDistance(ending) == 2) {
-            uses_left--;
-            return 2;
+
+        if(map.getField(starting).getPlayerOnField() != abstractPlayer){
+            return -1;
         }
-        return -1;
+
+        if (starting.getDistance(ending) != 2) {
+
+            return -1;
+        }
+        uses_left--;
+        map.getField(ending).setPlayerOnField(abstractPlayer);
+        map.getField(starting).setPlayerOnField(null);
+        return 2;
     }
 
     @Override
@@ -54,6 +62,35 @@ public class OneTileAnyPawnMoveRule extends MoveRule {
     @Override
     public MoveRule makeCopy(){
         return new OneTileAnyPawnMoveRule();
+    }
+
+    @Override
+    public MapPoint getBestMove(Map map, MapPoint target, MapPoint starting, AbstractPlayer player){
+        MapPoint best = starting;
+        int distance = target.getDistance(starting);
+        ArrayList<MapPoint> move = new ArrayList<>();
+
+        for(int i = -1; i <= 1; i++){
+            for(int j = -1; j <= 1; j++){
+                if(map.getField(new MapPoint(starting.getX() + i, starting.getY() + j))!= null){
+                    MapPoint mp = new MapPoint(starting.getX() + i, starting.getY() + j);
+                    move.clear();
+                    reset();
+                    move.add(starting);
+                    move.add(mp);
+
+                    if(checkMove(map, move, player,false) == -1){
+                        continue;
+                    }
+
+                    if (target.getDistance(mp) < distance){
+                        distance = target.getDistance(mp);
+                        best = mp;
+                    }
+                }
+            }
+        }
+        return best;
     }
 }
 

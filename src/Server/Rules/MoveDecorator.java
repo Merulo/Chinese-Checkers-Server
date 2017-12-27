@@ -7,7 +7,7 @@ import Server.Player.AbstractPlayer;
 import java.util.*;
 
 public class MoveDecorator {
-    private List<MoveRule> moveRules;
+    private ArrayList<MoveRule> moveRules;
     private int pawnNumber;
     private Map map;
 
@@ -19,8 +19,20 @@ public class MoveDecorator {
         moveRules.add(moveRule);
     }
 
-    public List<MoveRule> getMoveRules() {
+    public ArrayList<MoveRule> getMoveRules() {
         return moveRules;
+    }
+
+    public int getPawnNumber(){
+        return pawnNumber;
+    }
+
+    public void setMap(Map map){
+        this.map = map;
+    }
+
+    public Map getMap() {
+        return map;
     }
 
     void removeRule(MoveRule moveRuleToRemove){
@@ -32,6 +44,37 @@ public class MoveDecorator {
         }
     }
 
+    public boolean checkMove(ArrayList<MapPoint> mapPoints, AbstractPlayer abstractPlayer){
+        sortRules();
+        resetRules();
+        boolean moveApplied = false;
+
+        while (true){
+            boolean changed = false;
+            for(MoveRule moveRule : moveRules){
+                int result = moveRule.checkMove(map, mapPoints, abstractPlayer, moveApplied);
+
+                System.out.println("RESULT INT: " + result);
+
+                //TODO: TEST THIS
+                if( result + 1 == mapPoints.size()){
+                    return true;
+                }
+                if( result != -1){
+                    mapPoints.subList(0, result).clear();
+                    changed = true;
+                    moveApplied = true;
+                    break;
+                }
+            }
+            if (!changed){
+                return false;
+            }
+        }
+    }
+
+
+
     private void resetRules(){
         for(MoveRule moveRule : moveRules){
             moveRule.reset();
@@ -42,43 +85,9 @@ public class MoveDecorator {
         this.pawnNumber = pawnNumber;
     }
 
-    public int getPawnNumber(){
-        return pawnNumber;
-    }
-
     private void sortRules() {
         moveRules.sort(Comparator.comparing(MoveRule::getPriority));
     }
-
-    public void setMap(Map map){
-        this.map = map;
-    }
-
-    public boolean checkMove(ArrayList<MapPoint> mapPoints, AbstractPlayer abstractPlayer){
-        sortRules();
-        resetRules();
-
-        while (true){
-            boolean changed = false;
-            for(MoveRule moveRule : moveRules){
-                int result = moveRule.checkMove(map, mapPoints, abstractPlayer);
-
-                //TODO: TEST THIS
-                if( result == mapPoints.size()){
-                    return true;
-                }
-                if( result != -1){
-                    mapPoints.subList(0, result).clear();
-                    changed = true;
-                    break;
-                }
-            }
-            if (!changed){
-                return false;
-            }
-        }
-    }
-
 
 
 

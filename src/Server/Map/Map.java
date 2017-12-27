@@ -17,6 +17,9 @@ public class Map {
         this.pawnNumber = pawnNumber;
     }
 
+    public void setPlayers(ArrayList<AbstractPlayer> players) {
+        this.players = players;
+    }
 
     //create map if null
     public void setUpMap(){
@@ -37,38 +40,75 @@ public class Map {
                     map[i][j].setPlayerOnField(null );
                 }
             }
+            for(int i = 0; i < rows; i++) {
+                for (int j = 0; j < rows - i; j++) {
+                    map[rows - i - 1][rows - j + rows * 2].setPartOfMap(true);
+                    map[i + rows][j + rows].setPartOfMap(true);
+                    map[rows - i + rows * 2][rows - j - 1].setPartOfMap(true);
+                    map[i + rows * 3 + 1][j + rows].setPartOfMap(true);
+                    map[rows - i + rows * 2][rows - j + rows * 2].setPartOfMap(true);
+                    map[i + rows][j + rows *3 + 1].setPartOfMap(true);
+                }
+            }
             setUpStartingPosition();
         }
+        printMap();
     }
 
     //returns the field under given point
     public Field getField(MapPoint mapPoint){
         if (mapPoint != null){
+            if (mapPoint.getX() < 0){
+                return null;
+            }
+            if (mapPoint.getY() < 0){
+                return null;
+            }
+            if (mapPoint.getX() >= map.length){
+                return null;
+            }
+            if (mapPoint.getY() >= map.length){
+                return null;
+            }
             return map[mapPoint.getX()][mapPoint.getY()];
         }
         return null;
     }
 
-    public void setPlayers(ArrayList<AbstractPlayer> players) {
-        this.players = players;
+    public ArrayList<MapPoint> getMyPawns(AbstractPlayer player){
+        ArrayList<MapPoint> mapPoints = new ArrayList<>();
+        for(int i = 0; i < map.length; i++){
+            for(int j = 0; j < map[i].length; j++){
+                if(map[i][j].getPlayerOnField() == player){
+                    mapPoints.add(new MapPoint(i,j));
+                }
+            }
+        }
+        return mapPoints;
     }
 
-    //calculates the necessary number of rows
-    private int calculateRowsNumber(){
-        int pawns = pawnNumber;
-        int row = 0;
-        while (pawns > 0){
-            row++;
-            pawns = pawns - row;
+    public ArrayList<MapPoint> getMyHome(AbstractPlayer player){
+        ArrayList<MapPoint> mapPoints = new ArrayList<>();
+        for(int i = 0; i < map.length; i++){
+            for(int j = 0; j < map[i].length; j++){
+                if(map[i][j].getHomePlayer() == player){
+                    mapPoints.add(new MapPoint(i,j));
+                }
+            }
         }
-        return row;
+        return mapPoints;
     }
 
     public void printMap(){
         for(Field fieldArray[] : map){
             for(Field field : fieldArray){
                 if(field.getPartOfMap()){
-                    System.out.print("O");
+                    if(field.getPlayerOnField()!=null) {
+                        System.out.print("P");
+                    }
+                    else{
+                        System.out.print("N");
+                    }
                 }
                 else{
                     System.out.print("X");
@@ -90,76 +130,65 @@ public class Map {
            int counter = 0;
            int x = 0;
            do{
+               System.out.println("WARTOŚĆ: " + counter);
                fillCorner(counter, players.get(x));
                x++;
                counter+= i;
            }while (counter < 6);
         }
-
     }
+
+    //calculates the necessary number of rows
+    private int calculateRowsNumber(){
+        int pawns = pawnNumber;
+        int row = 0;
+        while (pawns > 0){
+            row++;
+            pawns = pawns - row;
+        }
+        return row;
+    }
+
     private void fillCorner(int option, AbstractPlayer player){
         int rows = calculateRowsNumber();
-        System.out.println("TESTING" + option);
-        switch (option){
-            case 0:{
-                for(int i = 0; i < rows; i++){
-                    for(int j = 0; j < rows - i; j++) {
-                        map[rows - i - 1][rows - j + rows * 2].setPartOfMap(true);
+        System.out.println("TESTING" + rows);
+        for(int i = 0; i < rows; i++){
+            for(int j = 0; j < rows - i; j++) {
+                switch (option){
+                    case 0:{
+                        System.out.println((rows - i - 1) + "," + (rows - j + rows * 2));
                         map[rows - i - 1][rows - j + rows * 2].setPlayerOnField(player);
-
+                        map[i + rows * 3 + 1][j + rows].setHomePlayer(player);
+                        break;
                     }
-                }
-                break;
-            }
-            case 1:{
-                for (int i = 0; i < rows; i++) {
-                    for (int j = 0; j < rows - i; j++) {
-                        map[i + rows][j + rows *3 + 1].setPartOfMap(true);
+                    case 1:{
                         map[i + rows][j + rows *3 + 1].setPlayerOnField(player);
+                        map[rows - i + rows * 2][rows - j - 1].setHomePlayer(player);
+                        break;
                     }
-                }
-                break;
-            }
-            case 2:{
-                for(int i = 0; i < rows; i++){
-                    for(int j = 0; j < rows - i; j++) {
-                        map[rows - i + rows * 2][rows - j + rows * 2].setPartOfMap(true);
+                    case 2:{
                         map[rows - i + rows * 2][rows - j + rows * 2].setPlayerOnField(player);
-
+                        map[i + rows][j + rows].setHomePlayer(player);
+                        break;
                     }
-                }
-                break;
-            }
-            case 3:{
-                for (int i = 0; i < rows; i++) {
-                    for (int j = 0; j < rows - i; j++) {
-                        map[i + rows * 3 + 1][j + rows].setPartOfMap(true);
+                    case 3:{
                         map[i + rows * 3 + 1][j + rows].setPlayerOnField(player);
+                        map[rows - i - 1][rows - j + rows * 2].setHomePlayer(player);
+                        break;
                     }
-                }
-                break;
-            }
-            case 4:{
-                for(int i = 0; i < rows; i++){
-                    for(int j = 0; j < rows - i; j++) {
-                        map[rows - i + rows * 2][rows - j - 1].setPartOfMap(true);
+                    case 4:{
                         map[rows - i + rows * 2][rows - j - 1].setPlayerOnField(player);
-
+                        map[i + rows][j + rows *3 + 1].setHomePlayer(player);
+                        break;
                     }
-                }
-                break;
-            }
-            case 5: {
-                for (int i = 0; i < rows; i++) {
-                    for (int j = 0; j < rows - i; j++) {
-                        map[i + rows][j + rows].setPartOfMap(true);
+                    case 5: {
                         map[i + rows][j + rows].setPlayerOnField(player);
+                        map[rows - i + rows * 2][rows - j + rows * 2].setHomePlayer(player);
+                        break;
                     }
                 }
-                break;
             }
         }
-
     }
 
 }

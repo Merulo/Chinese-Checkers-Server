@@ -18,7 +18,7 @@ abstract public class MoveRule {
 
     //returns -1 if Rule cannot be applied to first and some other point
     //returns n where n is the point that allows to make move according to that rule
-    public abstract int checkMove(Map map, ArrayList<MapPoint> mapPoints, AbstractPlayer abstractPlayer);
+    public abstract int checkMove(Map map, ArrayList<MapPoint> mapPoints, AbstractPlayer abstractPlayer, boolean moveApplied);
 
     //getters, setters
     int getPriority(){
@@ -29,24 +29,6 @@ abstract public class MoveRule {
         uses_left = max_usages;
     }
 
-
-
-
-
-
-
-    //TODO: RETHINK WHAT IS BENEATH
-    boolean applied = false;
-    public ArrayList<MapPoint> getNeighbours(){
-        return null;
-    }
-
-    public boolean getApplied(){
-        return applied;
-    }
-
-    public void setApplied(boolean value){
-        applied = value;
-    }
+    public abstract MapPoint getBestMove(Map map, MapPoint target, MapPoint starting, AbstractPlayer player);
 
 }
