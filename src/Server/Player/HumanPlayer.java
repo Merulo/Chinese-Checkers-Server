@@ -38,7 +38,6 @@ public class HumanPlayer extends AbstractPlayer {
             System.out.println("HUMAN PLAYER STARTING" );
             while (playing) {
                 String string = input.readLine();
-                System.out.println("GAME MESSAGE: " + string);
                 parseMessage(string);
             }
         }

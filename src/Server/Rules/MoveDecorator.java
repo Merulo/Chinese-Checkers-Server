@@ -49,10 +49,14 @@ public class MoveDecorator {
         resetRules();
         boolean moveApplied = false;
 
+        if (mapPoints.size() == 0 || mapPoints.size() == 1){
+            return false;
+        }
+
         while (true){
             boolean changed = false;
             for(MoveRule moveRule : moveRules){
-                int result = moveRule.checkMove(map, mapPoints, abstractPlayer, moveApplied);
+                int result = moveRule.checkMove(map, mapPoints, abstractPlayer, moveApplied, true);
 
                 System.out.println("RESULT INT: " + result);
 

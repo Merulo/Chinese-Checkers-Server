@@ -20,7 +20,9 @@ public class ComputerPlayer extends AbstractPlayer {
 
     @Override
     public void sendMessage(String message){
-        //System.out.println("TEST");
+        if (message.equals("YourTurn;")){
+            doMove();
+        }
     }
 
     public void doMove(){

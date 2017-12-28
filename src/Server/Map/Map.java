@@ -118,6 +118,28 @@ public class Map {
         }
     }
 
+    public void printMap(MapPoint mapPoint){
+        for(int i = 0; i < map.length; i++){
+            for(int j = 0; j < map[i].length; j++){
+                if(i == mapPoint.getX() && j == mapPoint.getY()){
+                    System.out.print("C");
+                }
+                else if(map[i][j].getPartOfMap()){
+                    if(map[i][j].getPlayerOnField()!=null) {
+                        System.out.print("P");
+                    }
+                    else{
+                        System.out.print("N");
+                    }
+                }
+                else{
+                    System.out.print("X");
+                }
+            }
+            System.out.println("");
+        }
+    }
+
     private void setUpStartingPosition(){
         int i = 6/players.size();
         if(players.size() == 4){

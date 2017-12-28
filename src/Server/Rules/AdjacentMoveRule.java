@@ -16,12 +16,11 @@ public class AdjacentMoveRule extends MoveRule {
     }
 
     @Override
-    public int checkMove(Map map, ArrayList<MapPoint> mapPoints, AbstractPlayer abstractPlayer, boolean moveApplied){
+    public int checkMove(Map map, ArrayList<MapPoint> mapPoints, AbstractPlayer abstractPlayer, boolean moveApplied, boolean notfake){
         //not enough points
         if(mapPoints.size() < 2) {
             return -1;
         }
-
         //no more uses
         if(uses_left == 0){
             return -1;
@@ -44,7 +43,6 @@ public class AdjacentMoveRule extends MoveRule {
             return -1;
         }
 
-        System.out.println(3);
         if(map.getField(starting).getPlayerOnField() != abstractPlayer){
             return -1;
         }
@@ -53,10 +51,12 @@ public class AdjacentMoveRule extends MoveRule {
         if (starting.getDistance(ending) != 1) {
             return -1;
         }
-        System.out.println(4);
-        uses_left--;
-        map.getField(ending).setPlayerOnField(abstractPlayer);
-        map.getField(starting).setPlayerOnField(null);
+
+        if(notfake) {
+            uses_left--;
+            map.getField(ending).setPlayerOnField(abstractPlayer);
+            map.getField(starting).setPlayerOnField(null);
+        }
 
         return 1;
     }
@@ -86,7 +86,7 @@ public class AdjacentMoveRule extends MoveRule {
                     move.add(starting);
                     move.add(mp);
 
-                    if(checkMove(map, move, player,false) == -1){
+                    if(checkMove(map, move, player,false, false) == -1){
                         continue;
                     }
 

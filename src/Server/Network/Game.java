@@ -36,13 +36,16 @@ public class Game implements NetworkManager {
         moveDecorator.setMap(map);
         map.setPlayers(players);
         map.setUpMap();
+
         currentPlayer = players.get(new Random().nextInt(players.size()));
 
         for(AbstractPlayer player : this.players){
           if (player instanceof ComputerPlayer){
               ((ComputerPlayer)player).setMoveDecorator(moveDecorator);
+              player.setNetworkManager(this);
           }
         }
+        currentPlayer.sendMessage("YourTurn;");
     }
 
 
@@ -88,6 +91,7 @@ public class Game implements NetworkManager {
 
     @Override
     public synchronized void parse(AbstractPlayer abstractPlayer, String message){
+        System.out.println("GAME MESSAGE: " + message);
         String type = SimpleParser.parse(message);
         switch (type) {
             case "Moves": {
@@ -144,6 +148,11 @@ public class Game implements NetworkManager {
             mapPoints.add(new MapPoint(x, y));
 
         }
+        if(mapPoints.size() > 0) {
+            map.printMap(mapPoints.get(0));
+            map.printMap(mapPoints.get(mapPoints.size() - 1));
+        }
+
         boolean result =  moveDecorator.checkMove(mapPoints, abstractPlayer);
 
         System.out.println("BOOLEAN: " + result);
@@ -152,6 +161,8 @@ public class Game implements NetworkManager {
             //TODO: RESULT == TRUE CHECK IF PLAYER HAS WON
             first = mapPoints.get(0).copy();
             last = mapPoints.get(mapPoints.size() - 1).copy();
+            map.printMap(first);
+            map.printMap(last);
 
             String tmp = "Move;";
             tmp+=Integer.toString(first.getY()) + "," + Integer.toString(first.getX()) + ";";
@@ -160,6 +171,9 @@ public class Game implements NetworkManager {
             for (AbstractPlayer player : players){
                 player.sendMessage( tmp);
             }
+
+            currentPlayer = getNextCurrentPlayer();
+            currentPlayer.sendMessage("YourTurn;");
         }
         else{
             abstractPlayer.sendMessage("IncorrectMove;");
@@ -168,6 +182,18 @@ public class Game implements NetworkManager {
         //TODO: RESULT == FALSE SEND INFO TO abstractPlayer
 
 
+    }
+
+    private AbstractPlayer getNextCurrentPlayer(){
+        int tmp = 0;
+
+        for(int i = 0; i < players.size(); i++){
+            if(players.get(i) == currentPlayer){
+                tmp = (i + 1) % players.size();
+                break;
+            }
+        }
+        return players.get(tmp);
     }
 
 

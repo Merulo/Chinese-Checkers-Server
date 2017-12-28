@@ -41,6 +41,7 @@ public class AggressiveStrategy implements Strategy {
         }
         //should never happen!
         if(freeTile == null){
+            System.out.println("SKIP");
             return "Skip;";
         }
         //sort the pawns to find the closes one (aggressive strategy)
@@ -56,16 +57,29 @@ public class AggressiveStrategy implements Strategy {
             moves.clear();
             moves.add(mapPoint);
             int newDistance = getBestMove(freeTile, mapPoint, moveDecorator, moves, abstractPlayer);
-
             if (newDistance < oldDistance){
-                return "Move;";
+                System.out.println("I GOT A MOVE!");
+                for(MapPoint mp : moves){
+                    System.out.println("TEST2 " + mp.getX() + " " + mp.getY());
+                }
+                return listToString(moves);
             }
         }
-
+        System.out.println("NO MOVE");
 
 
 
         return "";
+    }
+
+    private String listToString(ArrayList<MapPoint> moves){
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Moves;");
+        for(MapPoint mapPoint : moves){
+            stringBuilder.append(mapPoint.getY()).append(",").append(mapPoint.getX()).append(";");
+        }
+        return stringBuilder.toString();
+
     }
 
     private int getBestMove(
@@ -78,10 +92,18 @@ public class AggressiveStrategy implements Strategy {
         MapPoint newPosition = mapPoint;
         ArrayList<MoveRule> moveRules = moveDecorator.getMoveRules();
 
+        System.out.println("Starting from :" + mapPoint.getX() + "," + mapPoint.getY());
+
         for(MoveRule moveRule : moveRules){
             MapPoint tmp = moveRule.getBestMove(moveDecorator.getMap(), target, mapPoint, player);
-            if(newPosition.getDistance(target) < tmp.getDistance(target)){
+            if(newPosition.getDistance(target) > tmp.getDistance(target)){
+                System.out.println("Adding :" + tmp.getX() + "," +tmp.getY()+ " ");
                 newPosition = target;
+                moves.add(tmp);
+                for(MapPoint mp : moves){
+                    System.out.println("TEST1 " + mp.getX() + " " + mp.getY());
+                }
+                return newPosition.getDistance(target);
             }
         }
         //reset

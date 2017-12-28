@@ -18,7 +18,7 @@ abstract public class MoveRule {
 
     //returns -1 if Rule cannot be applied to first and some other point
     //returns n where n is the point that allows to make move according to that rule
-    public abstract int checkMove(Map map, ArrayList<MapPoint> mapPoints, AbstractPlayer abstractPlayer, boolean moveApplied);
+    public abstract int checkMove(Map map, ArrayList<MapPoint> mapPoints, AbstractPlayer abstractPlayer, boolean moveApplied, boolean notfake);
 
     //getters, setters
     int getPriority(){

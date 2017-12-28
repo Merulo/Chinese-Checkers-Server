@@ -15,7 +15,7 @@ public class TwoTilesNoPawnsRule extends MoveRule {
         uses_left = max_usages;
     }
 
-    public int checkMove(Map map, ArrayList<MapPoint> mapPoints, AbstractPlayer abstractPlayer, boolean moveApplied){
+    public int checkMove(Map map, ArrayList<MapPoint> mapPoints, AbstractPlayer abstractPlayer, boolean moveApplied, boolean notfake){
         //not enough points
         if(mapPoints.size() < 4) {
             return -1;
@@ -50,9 +50,11 @@ public class TwoTilesNoPawnsRule extends MoveRule {
             return -1;
         }
 
-        uses_left--;
-        map.getField(ending).setPlayerOnField(abstractPlayer);
-        map.getField(starting).setPlayerOnField(null);
+        if(notfake) {
+            uses_left--;
+            map.getField(ending).setPlayerOnField(abstractPlayer);
+            map.getField(starting).setPlayerOnField(null);
+        }
         return 3;
     }
 
@@ -81,7 +83,7 @@ public class TwoTilesNoPawnsRule extends MoveRule {
                     move.add(starting);
                     move.add(mp);
 
-                    if(checkMove(map, move, player,false) == -1){
+                    if(checkMove(map, move, player,false, false) == -1){
                         continue;
                     }
 
