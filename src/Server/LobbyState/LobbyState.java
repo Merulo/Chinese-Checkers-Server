@@ -3,6 +3,10 @@ package Server.LobbyState;
 import Server.Network.Game;
 import Server.Network.Lobby;
 
+/**@author Damian Nowak
+ * Lobby State is an example of State Design patter
+ * Different lobbies have different states, and each one follows and precedeses a different one
+ */
 public class LobbyState {
     //current state of lobby
     private State state;
@@ -25,6 +29,11 @@ public class LobbyState {
     //sets game
     public void setGame(Game game) {
         this.game = game;
+    }
+
+    //returns game
+    public Game getGame() {
+        return game;
     }
 
     //returns the state of lobby

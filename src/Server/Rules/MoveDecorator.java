@@ -69,9 +69,8 @@ public class MoveDecorator {
             for(MoveRule moveRule : moveRules){
                 int result = moveRule.checkMove(copy, mapPoints, abstractPlayer, moveApplied);
 
-                System.out.println("RESULT INT: " + result);
+               // System.out.println("RESULT INT: " + result);
 
-                //TODO: TEST THIS
                 if( result + 1 == mapPoints.size()){
                     return true;
                 }

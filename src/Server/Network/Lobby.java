@@ -26,10 +26,13 @@ public class Lobby implements NetworkManager {
     private long startMillis;
     //the game variable
     private Game game;
+    //number of this lobby
+    private int number;
 
 
     //creates game, sets hub, and gives the game number
     Lobby(Hub hub, int number){
+        this.number = number;
         players = new ArrayList<>();
         settings = new Settings(hub, this, "Lobby: " + Integer.toString(number + 1), number);
         this.hub = hub;
@@ -47,6 +50,9 @@ public class Lobby implements NetworkManager {
         }
 
         players.add(player);
+        if(players.get(0) == player){
+            player.sendMessage("Master;");
+        }
 
         for(AbstractPlayer abstractPlayer : players){
             player.sendMessage(abstractPlayer.getData());
@@ -66,6 +72,10 @@ public class Lobby implements NetworkManager {
                             abstractPlayer.sendMessage( "Remove:" +  players.get(i).getNick() + ";");
                     }
                     players.remove(i);
+                    if(i == 0){
+                        if(players.size() > 0)
+                        players.get(0).sendMessage("Master;");
+                    }
                     i = i - 1;
                 }
             }
@@ -81,6 +91,11 @@ public class Lobby implements NetworkManager {
     @Override
     public synchronized void enter(AbstractPlayer client, int number){
         System.out.println("MOVING FROM LOBBY TO HUB");
+
+        if(players.get(0) == client){
+            if(players.size() > 1)
+            players.get(1).sendMessage("Master;");
+        }
         players.remove(client);
         for(AbstractPlayer abstractPlayer : players){
             abstractPlayer.sendMessage("Remove;" + client.getNick() + ";");
@@ -93,6 +108,7 @@ public class Lobby implements NetworkManager {
 
     @Override
     public synchronized void parse(AbstractPlayer abstractPlayer, String message){
+        System.out.println("LOBBY MESSAGE: " + message);
         String type = SimpleParser.parse(message);
         switch (type) {
             case "Settings": {
@@ -113,7 +129,7 @@ public class Lobby implements NetworkManager {
                 break;
             }
             case "RemoveBot":{
-                removeAbstractPlayer(message);
+                //removeAbstractPlayer(message , -1);
                 break;
             }
             case "Kick":{
@@ -123,13 +139,20 @@ public class Lobby implements NetworkManager {
         }
     }
 
+    public void reset(){
+        players = new ArrayList<>();
+        settings = new Settings(hub, this, "Lobby: " + Integer.toString(number + 1), number);
+        startMillis = System.currentTimeMillis();
+        game = null;
+    }
+
     private void removePlayer(String message, AbstractPlayer abstractPlayer){
         if (abstractPlayer == players.get(0)){
             message = SimpleParser.cut(message);
             int i = Integer.parseInt(message);
             i--;
             if(i < players.size() && i != 0) {
-                removeAbstractPlayer(players.get(i).getNick());
+                removeAbstractPlayer(players.get(i).getNick(), i);
             }
         }
     }
@@ -161,7 +184,6 @@ public class Lobby implements NetworkManager {
 
     //resend messages to other players in current game
     private synchronized void resendMessage(String message, AbstractPlayer abstractPlayer){
-        message = SimpleParser.cut(message);
         String result = "Msg;" + getTimeStamp();
         if (abstractPlayer == null){
             result+= "Server";
@@ -171,6 +193,8 @@ public class Lobby implements NetworkManager {
         }
 
         result+= ": " + message;
+
+        System.out.println("Sending: " + result);
 
         for(AbstractPlayer player : players){
             if(player.isPlaying()){
@@ -292,33 +316,24 @@ public class Lobby implements NetworkManager {
     }
 
     //removes player
-    private void removeAbstractPlayer(String message){
-        boolean removed = false;
-        String nick = "";
-        for (AbstractPlayer abstractPlayer : players) {
-            if (abstractPlayer.getNick().equals(message)) {
-                if (abstractPlayer instanceof ComputerPlayer) {
-                    nick = abstractPlayer.getNick();
-                    players.remove(abstractPlayer);
-                    hub.sendGame(this);
-                    removed = true;
-                    break;
-                }
-                else {
-                    //removes normal players from lobby
-                    abstractPlayer.sendMessage("Leave;");
-                    nick = abstractPlayer.getNick();
-                    enter(abstractPlayer, 0);
-                    removed = true;
-                    break;
-                }
+    private void removeAbstractPlayer(String message, int i){
+        AbstractPlayer abstractPlayer = players.get(i);
+        if (abstractPlayer instanceof ComputerPlayer) {
+            if(players.get(0) == abstractPlayer){
+                players.get(1).sendMessage("Master;");
             }
+
+            players.remove(abstractPlayer);
+            hub.sendGame(this);
+        }
+        else {
+            //removes normal players from lobby
+            abstractPlayer.sendMessage("Leave;");
+            enter(abstractPlayer, 0);
         }
 
-        if(removed) {
-            for (AbstractPlayer player : players) {
-                player.sendMessage("Remove;" + nick + ";");
-            }
+        for (AbstractPlayer player : players) {
+            player.sendMessage("Remove;" + Integer.toString(i) + ";");
         }
     }
 

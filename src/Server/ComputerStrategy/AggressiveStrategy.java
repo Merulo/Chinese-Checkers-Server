@@ -9,7 +9,13 @@ import Server.Rules.MoveRule;
 import java.util.ArrayList;
 import java.util.Comparator;
 
+/**@author Damian Nowak
+ * Aggressive strategy focuses on moving the furthest pawn from
+ * home. This allows it to excel in the long run.
+ */
 public class AggressiveStrategy implements Strategy {
+
+    //returns move as String, is not game depended
     public String getMove(MoveDecorator moveDecorator, AbstractPlayer abstractPlayer){
         Map map = moveDecorator.getMap();
         //all the home fields
@@ -40,16 +46,15 @@ public class AggressiveStrategy implements Strategy {
             }
         }
 
-
         //should never happen!
         if(freeTile == null){
             return "Skip;";
         }
-        //sort the pawns to find the closes one (aggressive strategy)
+        //sort the pawns to find the furthest one (aggressive strategy)
         {
             final MapPoint target = freeTile;
             inHome.sort(Comparator.comparing((MapPoint mp) -> mp.getDistance(target)));
-            notInHome.sort(Comparator.comparing((MapPoint mp) -> mp.getDistance(target)));
+            notInHome.sort(Comparator.comparing((MapPoint mp) -> -mp.getDistance(target)));
         }
 
         //get the pawns not in home which can move closer than the old distance
@@ -60,10 +65,21 @@ public class AggressiveStrategy implements Strategy {
                 return listToString(moves);
             }
         }
+        //get the pawns not in home which can move closer than the old distance
+        for(MapPoint mapPoint : inHome){
+            moves = getBestMove(freeTile, mapPoint, moveDecorator, abstractPlayer);
+
+            if (moves.size() > 0){
+                return listToString(moves);
+            }
+        }
+
         return "Skip;";
     }
 
+    //converts list of moves to string
     private String listToString(ArrayList<MapPoint> moves){
+        //string builder is more efficient
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Moves;");
         for(MapPoint mapPoint : moves){
@@ -73,18 +89,19 @@ public class AggressiveStrategy implements Strategy {
 
     }
 
+    //returns the best move given the current field and target
     private ArrayList<MapPoint> getBestMove(
             MapPoint target,
             MapPoint mapPoint,
             MoveDecorator moveDecorator,
             AbstractPlayer player) {
+        //result array
+        ArrayList<MapPoint> mapPoints = null;
 
-        ArrayList<MoveRule> moveRules = moveDecorator.getMoveRules();
-        ArrayList<MapPoint> mapPoints = new ArrayList<>();
-
-        for(MoveRule moveRule : moveRules) {
+        for(MoveRule moveRule : moveDecorator.getMoveRules()) {
             mapPoints = moveRule.getBestMove(moveDecorator.getMap(), target, mapPoint, player);
         }
+        //do not return null!
         if(mapPoints == null){
             mapPoints = new ArrayList<>();
         }

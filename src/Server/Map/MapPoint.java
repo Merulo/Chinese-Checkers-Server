@@ -45,12 +45,11 @@ public class MapPoint {
 
     //calculates distance according to our metric
     public int getDistance(MapPoint target){
-
-        if(x == target.getX()){
-            return Math.abs(x - target.getX()) + Math.abs(y - target.getY());
+        if(x == target.getX() && y == target.getY()){
+            return 0;
         }
 
-        if(y == target.getY()) {
+        if(x == target.getX() || y == target.getY()){
             return Math.abs(x - target.getX()) + Math.abs(y - target.getY());
         }
 
@@ -58,10 +57,7 @@ public class MapPoint {
         int tx1 = x;
         int ty1 = y;
 
-        if(x > target.getX() && y > target.getY()){
-            return Math.abs(x - target.getX()) + Math.abs(y - target.getY());
-        }
-        if(x < target.getX() && y < target.getY()){
+        if((x > target.getX() && y > target.getY()) || (x < target.getX() && y < target.getY())){
             return Math.abs(x - target.getX()) + Math.abs(y - target.getY());
         }
 

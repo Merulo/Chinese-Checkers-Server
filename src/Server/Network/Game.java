@@ -110,6 +110,16 @@ public class Game implements NetworkManager {
         }
     }
 
+    public boolean areThereOnlyBotsInGame(){
+        for(AbstractPlayer abstractPlayer : players){
+            if (abstractPlayer instanceof HumanPlayer){
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     private void replacePlayerWithComputer(AbstractPlayer player){
         System.out.println(player.getNick() + " should be replaced by Computer");
         //TODO: IMPLEMENT THIS METHOD
@@ -121,8 +131,17 @@ public class Game implements NetworkManager {
     }
 
     private synchronized void resendMessage(String message, AbstractPlayer abstractPlayer){
-        message = SimpleParser.cut(message);
-        String result = "Msg;" + getTimeStamp() + abstractPlayer.getNick() + ": " + message;
+        String result = "Msg;" + getTimeStamp();
+        if (abstractPlayer == null){
+            result+= "Server";
+        }
+        else{
+            result += abstractPlayer.getNick();
+        }
+
+        result+= ": " + message;
+
+        System.out.println("Result: " + result);
 
         for(AbstractPlayer player : players){
             if(player.isPlaying()){
@@ -134,72 +153,50 @@ public class Game implements NetworkManager {
     private void parseMoveMessage(String message, AbstractPlayer abstractPlayer){
         if(abstractPlayer != currentPlayer){
             abstractPlayer.sendMessage("NotYourTurn;");
-            abstractPlayer.sendMessage("But you can still move, since this is BETA");
+            return;
         }
 
-        ArrayList<MapPoint> mapPoints = new ArrayList<>();
-        message = SimpleParser.cut(message);
-        MapPoint first;
-        MapPoint last;
-
-
-        while (!message.isEmpty()){
-            String point = SimpleParser.parse(message);
-            message = SimpleParser.cut(message);
-            int y = Integer.parseInt(SimpleParser.parse(point, ","));
-            point = SimpleParser.cut(point, ",");
-            int x = Integer.parseInt(point);
-            mapPoints.add(new MapPoint(x, y));
-
-        }
-        if(mapPoints.size() > 0) {
-            first = mapPoints.get(0).copy();
-            last = mapPoints.get(mapPoints.size() - 1).copy();
-        }
-        else{
+        ArrayList<MapPoint> mapPoints = parseStringToArrayOfMapPoints(message);
+        if(!(mapPoints.size() > 0)){
             abstractPlayer.sendMessage("IncorrectMove;");
             return;
         }
+        MapPoint first = mapPoints.get(0).copy();
+        MapPoint last = mapPoints.get(mapPoints.size() - 1).copy();
 
         boolean result =  moveDecorator.checkMove(mapPoints, abstractPlayer);
 
         System.out.println("BOOLEAN: " + result);
         if(result){
-            //TODO: RESULT == TRUE SEND THE MOVE TO ALL PLAYERS
-            //TODO: RESULT == TRUE CHECK IF PLAYER HAS WON
+            handleConfirmedMove(first, last, abstractPlayer);
 
-            moveDecorator.doMove(first, last, abstractPlayer);
-
-            if (abstractPlayer instanceof HumanPlayer){
-                System.out.println("HUMAN PLAYER MOVED!");
+            if(checkWinning(abstractPlayer)){
+                resendMessage(abstractPlayer.getNick() + " has won the game!", null);
+                abstractPlayer.setHasWon(true);
             }
-
-
-            String tmp = "Move;";
-            map.printMap();
-            tmp+=Integer.toString(first.getY()) + "," + Integer.toString(first.getX()) + ";";
-            tmp+=Integer.toString(last.getY()) + "," + Integer.toString(last.getX()) + ";";
-
-            System.out.println("Sending: " + tmp);
-
-            for (AbstractPlayer player : players){
-                player.sendMessage(tmp);
-            }
-
-            currentPlayer = getNextCurrentPlayer();
-            currentPlayer.sendMessage("YourTurn;");
         }
         else{
             abstractPlayer.sendMessage("IncorrectMove;");
         }
 
-        //TODO: RESULT == FALSE SEND INFO TO abstractPlayer
 
+    }
 
+    private boolean hasEverybodyWon(){
+        for(AbstractPlayer abstractPlayer : players){
+            if (!abstractPlayer.getHasWon()){
+                return false;
+            }
+        }
+        return true;
     }
 
     private AbstractPlayer getNextCurrentPlayer(){
         int tmp = 0;
+
+        if(hasEverybodyWon()){
+            resendMessage("Everybody has won! End of game!", null);
+        }
 
         for(int i = 0; i < players.size(); i++){
             if(players.get(i) == currentPlayer){
@@ -207,6 +204,12 @@ public class Game implements NetworkManager {
                 break;
             }
         }
+
+        if(players.get(tmp).getHasWon()){
+            currentPlayer = players.get(tmp);
+            return getNextCurrentPlayer();
+        }
+
         return players.get(tmp);
     }
 
@@ -215,6 +218,40 @@ public class Game implements NetworkManager {
         currentPlayer.sendMessage("YourTurn;");
     }
 
+    private ArrayList<MapPoint> parseStringToArrayOfMapPoints(String message){
+        message = SimpleParser.cut(message);
+        ArrayList<MapPoint> mapPoints = new ArrayList<>();
+        while (!message.isEmpty()){
+            String point = SimpleParser.parse(message);
+            message = SimpleParser.cut(message);
+            int y = Integer.parseInt(SimpleParser.parse(point, ","));
+            point = SimpleParser.cut(point, ",");
+            int x = Integer.parseInt(point);
+            mapPoints.add(new MapPoint(x, y));
+        }
+        return mapPoints;
+    }
 
+    private void handleConfirmedMove(MapPoint first, MapPoint last, AbstractPlayer abstractPlayer){
+        moveDecorator.doMove(first, last, abstractPlayer);
 
+        String tmp = "Move;";
+        map.printMap();
+        tmp+=Integer.toString(first.getY()) + "," + Integer.toString(first.getX()) + ";";
+        tmp+=Integer.toString(last.getY()) + "," + Integer.toString(last.getX()) + ";";
+
+        System.out.println("Sending: " + tmp);
+
+        for (AbstractPlayer player : players){
+            player.sendMessage(tmp);
+        }
+
+        currentPlayer = getNextCurrentPlayer();
+        currentPlayer.sendMessage("YourTurn;");
+    }
+
+    private boolean checkWinning(AbstractPlayer abstractPlayer){
+        Map map = moveDecorator.getMap();
+        return map.checkWin(abstractPlayer);
+    }
 }

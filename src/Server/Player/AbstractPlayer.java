@@ -10,6 +10,7 @@ public abstract class AbstractPlayer extends Thread {
     Color color;
     Boolean ready = false;
     NetworkManager networkManager;
+    private Boolean hasWon = false;
 
     public void setNetworkManager(NetworkManager networkManager) {
         this.networkManager = networkManager;
@@ -22,6 +23,14 @@ public abstract class AbstractPlayer extends Thread {
     }
 
     public void setReady(boolean value){ready = value;}
+
+    public Boolean getHasWon() {
+        return hasWon;
+    }
+
+    public void setHasWon(Boolean hasWon) {
+        this.hasWon = hasWon;
+    }
 
     public String getData(){
         String result = "PlayerList;";

@@ -55,8 +55,8 @@ public class Settings {
         builder.append("RuleOn;");
         int i = 0;
 
-        for(MoveRule moveRule : hub.getMoveRules()){
-            if(builder.toString().contains(moveRule.getName()))
+        for(MoveRule moveRule : moveDecorator.getMoveRules()){
+            if(!hub.getMoveRules().contains(moveRule))
                 builder.append(Integer.toString(i)).append(";").append(moveRule.getName()).append(";");
             i++;
         }

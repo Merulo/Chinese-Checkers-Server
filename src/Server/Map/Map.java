@@ -70,6 +70,19 @@ public class Map {
         //printMap();
     }
 
+    public boolean checkWin(AbstractPlayer abstractPlayer){
+        for(Field fieldArray[] : map) {
+            for (Field field : fieldArray) {
+                if(field.getHomePlayer() == abstractPlayer){
+                    if(field.getPlayerOnField() != abstractPlayer){
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
     //returns the field under given point
     public Field getField(MapPoint mapPoint){
         if (mapPoint != null){

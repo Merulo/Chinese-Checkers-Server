@@ -18,7 +18,9 @@ public class Playing implements State {
     }
     @Override
     public void handleLobby(LobbyState lobbyState){
-        //TODO: HANDLE MOVE REQUESTS
+        if(lobbyState.getGame().areThereOnlyBotsInGame()){
+            lobbyState.nextPhase();
+        }
     }
     @Override
     public String getName(){

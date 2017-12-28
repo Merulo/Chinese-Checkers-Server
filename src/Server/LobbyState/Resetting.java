@@ -18,6 +18,9 @@ public class Resetting implements State {
     }
     @Override
     public void handleLobby(LobbyState lobbyState){
+        lobbyState.getLobby().reset();
+        lobbyState.nextPhase();
+
 
     }
     @Override
