@@ -4,6 +4,7 @@ import Server.Map.Map;
 import Server.Map.MapPoint;
 import Server.Player.AbstractPlayer;
 import Server.Player.ComputerPlayer;
+import Server.Player.HumanPlayer;
 import Server.Rules.MoveDecorator;
 import Server.SimpleParser;
 
@@ -102,6 +103,10 @@ public class Game implements NetworkManager {
                 resendMessage(message, abstractPlayer);
                 break;
             }
+            case "Skip":{
+                handleSkip();
+                break;
+            }
         }
     }
 
@@ -144,13 +149,16 @@ public class Game implements NetworkManager {
             int y = Integer.parseInt(SimpleParser.parse(point, ","));
             point = SimpleParser.cut(point, ",");
             int x = Integer.parseInt(point);
-            System.out.println("New point in list: (" + x + "," + y + ")");
             mapPoints.add(new MapPoint(x, y));
 
         }
         if(mapPoints.size() > 0) {
-            map.printMap(mapPoints.get(0));
-            map.printMap(mapPoints.get(mapPoints.size() - 1));
+            first = mapPoints.get(0).copy();
+            last = mapPoints.get(mapPoints.size() - 1).copy();
+        }
+        else{
+            abstractPlayer.sendMessage("IncorrectMove;");
+            return;
         }
 
         boolean result =  moveDecorator.checkMove(mapPoints, abstractPlayer);
@@ -159,17 +167,23 @@ public class Game implements NetworkManager {
         if(result){
             //TODO: RESULT == TRUE SEND THE MOVE TO ALL PLAYERS
             //TODO: RESULT == TRUE CHECK IF PLAYER HAS WON
-            first = mapPoints.get(0).copy();
-            last = mapPoints.get(mapPoints.size() - 1).copy();
-            map.printMap(first);
-            map.printMap(last);
+
+            moveDecorator.doMove(first, last, abstractPlayer);
+
+            if (abstractPlayer instanceof HumanPlayer){
+                System.out.println("HUMAN PLAYER MOVED!");
+            }
+
 
             String tmp = "Move;";
+            map.printMap();
             tmp+=Integer.toString(first.getY()) + "," + Integer.toString(first.getX()) + ";";
             tmp+=Integer.toString(last.getY()) + "," + Integer.toString(last.getX()) + ";";
 
+            System.out.println("Sending: " + tmp);
+
             for (AbstractPlayer player : players){
-                player.sendMessage( tmp);
+                player.sendMessage(tmp);
             }
 
             currentPlayer = getNextCurrentPlayer();
@@ -194,6 +208,11 @@ public class Game implements NetworkManager {
             }
         }
         return players.get(tmp);
+    }
+
+    private void handleSkip(){
+        currentPlayer = getNextCurrentPlayer();
+        currentPlayer.sendMessage("YourTurn;");
     }
 
 

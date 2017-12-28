@@ -17,6 +17,21 @@ public class Map {
         this.pawnNumber = pawnNumber;
     }
 
+    public Map copy(){
+        Map map = new Map(pawnNumber);
+        map.setPlayers(players);
+        map.setUpMap();
+
+        for (int i = 0; i < this.map.length; i++) {
+            for(int j = 0; j < this.map[0].length; j++){
+                map.setField(i, j, this.map[i][j].copy());
+            }
+        }
+
+
+        return map;
+    }
+
     public void setPlayers(ArrayList<AbstractPlayer> players) {
         this.players = players;
     }
@@ -52,7 +67,7 @@ public class Map {
             }
             setUpStartingPosition();
         }
-        printMap();
+        //printMap();
     }
 
     //returns the field under given point
@@ -116,6 +131,23 @@ public class Map {
             }
             System.out.println("");
         }
+        /*
+        for(Field fieldArray[] : map){
+            for(Field field : fieldArray){
+                if(field.getPartOfMap()){
+                    if(field.getHomePlayer()!=null) {
+                        System.out.print("H");
+                    }
+                    else{
+                        System.out.print("N");
+                    }
+                }
+                else{
+                    System.out.print("X");
+                }
+            }
+            System.out.println("");
+        }*/
     }
 
     public void printMap(MapPoint mapPoint){
@@ -152,7 +184,6 @@ public class Map {
            int counter = 0;
            int x = 0;
            do{
-               System.out.println("WARTOŚĆ: " + counter);
                fillCorner(counter, players.get(x));
                x++;
                counter+= i;
@@ -173,12 +204,10 @@ public class Map {
 
     private void fillCorner(int option, AbstractPlayer player){
         int rows = calculateRowsNumber();
-        System.out.println("TESTING" + rows);
         for(int i = 0; i < rows; i++){
             for(int j = 0; j < rows - i; j++) {
                 switch (option){
                     case 0:{
-                        System.out.println((rows - i - 1) + "," + (rows - j + rows * 2));
                         map[rows - i - 1][rows - j + rows * 2].setPlayerOnField(player);
                         map[i + rows * 3 + 1][j + rows].setHomePlayer(player);
                         break;
@@ -213,4 +242,7 @@ public class Map {
         }
     }
 
+    private void setField(int i, int j, Field f){
+        map[i][j] = f;
+    }
 }

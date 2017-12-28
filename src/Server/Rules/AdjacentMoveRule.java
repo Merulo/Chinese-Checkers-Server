@@ -16,28 +16,27 @@ public class AdjacentMoveRule extends MoveRule {
     }
 
     @Override
-    public int checkMove(Map map, ArrayList<MapPoint> mapPoints, AbstractPlayer abstractPlayer, boolean moveApplied, boolean notfake){
+    public int checkMove(Map map, ArrayList<MapPoint> mapPoints, AbstractPlayer abstractPlayer, boolean moveApplied){
         //not enough points
         if(mapPoints.size() < 2) {
             return -1;
         }
         //no more uses
-        if(uses_left == 0){
+        if(uses_left == 0) {
             return -1;
         }
         //this move cannot be combined with others
         if(moveApplied){
             return -1;
         }
-        System.out.println(1);
 
         MapPoint starting   = mapPoints.get(0);
         MapPoint ending     = mapPoints.get(1);
+
         //field is taken
         if(map.getField(ending).getPlayerOnField() != null){
             return -1;
         }
-        System.out.println(2);
         //field is not part of map
         if(!map.getField(ending).getPartOfMap()){
             return -1;
@@ -46,17 +45,12 @@ public class AdjacentMoveRule extends MoveRule {
         if(map.getField(starting).getPlayerOnField() != abstractPlayer){
             return -1;
         }
-
         //distance is not 1
         if (starting.getDistance(ending) != 1) {
             return -1;
         }
 
-        if(notfake) {
-            uses_left--;
-            map.getField(ending).setPlayerOnField(abstractPlayer);
-            map.getField(starting).setPlayerOnField(null);
-        }
+        uses_left--;
 
         return 1;
     }
@@ -72,8 +66,7 @@ public class AdjacentMoveRule extends MoveRule {
     }
 
     @Override
-    public MapPoint getBestMove(Map map, MapPoint target, MapPoint starting, AbstractPlayer player){
-        MapPoint best = starting;
+    public ArrayList<MapPoint> getBestMove(Map map, MapPoint target, MapPoint starting, AbstractPlayer player){
         int distance = target.getDistance(starting);
         ArrayList<MapPoint> move = new ArrayList<>();
 
@@ -86,17 +79,15 @@ public class AdjacentMoveRule extends MoveRule {
                     move.add(starting);
                     move.add(mp);
 
-                    if(checkMove(map, move, player,false, false) == -1){
+                    if(checkMove(map, move, player,false) == -1){
                         continue;
                     }
-
                     if (target.getDistance(mp) < distance){
-                        distance = target.getDistance(mp);
-                        best = mp;
+                        return move;
                     }
                 }
             }
         }
-        return best;
+        return null;
     }
 }

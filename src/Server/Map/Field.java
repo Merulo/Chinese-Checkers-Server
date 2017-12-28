@@ -17,6 +17,13 @@ public class Field {
         playerOnField = null;
         homePlayer = null;
     }
+    public Field copy(){
+        Field field = new Field();
+        field.setPartOfMap(partOfMap);
+        field.setPlayerOnField(playerOnField);
+        field.setHomePlayer(homePlayer);
+        return field;
+    }
     //returns the player
     public AbstractPlayer getPlayerOnField(){
         return playerOnField;

@@ -1,5 +1,6 @@
 package Server;
 
+import Server.Map.MapPoint;
 import Server.Network.Server;
 
 public class Main {

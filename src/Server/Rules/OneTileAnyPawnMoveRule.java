@@ -15,7 +15,7 @@ public class OneTileAnyPawnMoveRule extends MoveRule {
         uses_left = max_usages;
     }
 
-    public int checkMove(Map map, ArrayList<MapPoint> mapPoints, AbstractPlayer abstractPlayer, boolean moveApplied, boolean notfake){
+    public int checkMove(Map map, ArrayList<MapPoint> mapPoints, AbstractPlayer abstractPlayer, boolean moveApplied){
         //not enough points
         if(mapPoints.size() < 3) {
             return -1;
@@ -48,11 +48,8 @@ public class OneTileAnyPawnMoveRule extends MoveRule {
 
             return -1;
         }
-        if(notfake) {
-            uses_left--;
-            map.getField(ending).setPlayerOnField(abstractPlayer);
-            map.getField(starting).setPlayerOnField(null);
-        }
+        uses_left--;
+
         return 2;
     }
 
@@ -67,32 +64,43 @@ public class OneTileAnyPawnMoveRule extends MoveRule {
     }
 
     @Override
-    public MapPoint getBestMove(Map map, MapPoint target, MapPoint starting, AbstractPlayer player){
-        MapPoint best = starting;
+    public ArrayList<MapPoint> getBestMove(Map map, MapPoint target, MapPoint starting, AbstractPlayer player){
         int distance = target.getDistance(starting);
         ArrayList<MapPoint> move = new ArrayList<>();
 
-        for(int i = -1; i <= 1; i++){
-            for(int j = -1; j <= 1; j++){
+        for(int i = -2; i <= 2; i++){
+            for(int j = -2; j <= 2; j++){
                 if(map.getField(new MapPoint(starting.getX() + i, starting.getY() + j))!= null){
                     MapPoint mp = new MapPoint(starting.getX() + i, starting.getY() + j);
-                    move.clear();
-                    reset();
-                    move.add(starting);
-                    move.add(mp);
 
-                    if(checkMove(map, move, player,false, false) == -1){
+                    float tmpx = (starting.getX() + mp.getX())/2;
+                    float tmpy = (starting.getY() + mp.getY())/2;
+
+                    if((int) tmpx != tmpx){
                         continue;
                     }
 
+                    if((int) tmpy != tmpy){
+                        continue;
+                    }
+                    MapPoint middle = new MapPoint((int)tmpx , (int) tmpy);
+
+                    move.clear();
+                    reset();
+                    move.add(starting);
+                    move.add(middle);
+                    move.add(mp);
+
+                    if(checkMove(map, move, player,false) == -1){
+                        continue;
+                    }
                     if (target.getDistance(mp) < distance){
-                        distance = target.getDistance(mp);
-                        best = mp;
+                        return move;
                     }
                 }
             }
         }
-        return best;
+        return null;
     }
 }
 

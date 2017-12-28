@@ -11,11 +11,11 @@ public class MoveDecorator {
     private int pawnNumber;
     private Map map;
 
-    MoveDecorator(){
+    public MoveDecorator(){
         moveRules = new ArrayList<>();
     }
 
-    void addRule(MoveRule moveRule){
+    public void addRule(MoveRule moveRule){
         moveRules.add(moveRule);
     }
 
@@ -27,6 +27,10 @@ public class MoveDecorator {
         return pawnNumber;
     }
 
+    public void setPawnNumber(int pawnNumber) {
+        this.pawnNumber = pawnNumber;
+    }
+
     public void setMap(Map map){
         this.map = map;
     }
@@ -35,13 +39,18 @@ public class MoveDecorator {
         return map;
     }
 
-    void removeRule(MoveRule moveRuleToRemove){
+    public void removeRule(MoveRule moveRuleToRemove){
         for(MoveRule moveRule : moveRules){
             if (moveRule.getClass().equals(moveRuleToRemove.getClass())){
                 moveRules.remove(moveRule);
                 return;
             }
         }
+    }
+
+    public void doMove(MapPoint starting, MapPoint ending, AbstractPlayer abstractPlayer){
+        map.getField(ending).setPlayerOnField(abstractPlayer);
+        map.getField(starting).setPlayerOnField(null);
     }
 
     public boolean checkMove(ArrayList<MapPoint> mapPoints, AbstractPlayer abstractPlayer){
@@ -52,11 +61,13 @@ public class MoveDecorator {
         if (mapPoints.size() == 0 || mapPoints.size() == 1){
             return false;
         }
+        Map copy = map.copy();
+        //copy.printMap();
 
         while (true){
             boolean changed = false;
             for(MoveRule moveRule : moveRules){
-                int result = moveRule.checkMove(map, mapPoints, abstractPlayer, moveApplied, true);
+                int result = moveRule.checkMove(copy, mapPoints, abstractPlayer, moveApplied);
 
                 System.out.println("RESULT INT: " + result);
 
@@ -65,10 +76,19 @@ public class MoveDecorator {
                     return true;
                 }
                 if( result != -1){
+                    copy.getField(mapPoints.get(0)).setPlayerOnField(null);
+                    copy.getField(mapPoints.get(result)).setPlayerOnField(abstractPlayer);
+                    //copy.printMap();
+
+
+
                     mapPoints.subList(0, result).clear();
                     changed = true;
                     moveApplied = true;
                     break;
+                }
+                for(MapPoint mapPoint : mapPoints){
+                    mapPoint.print();
                 }
             }
             if (!changed){
@@ -83,10 +103,6 @@ public class MoveDecorator {
         for(MoveRule moveRule : moveRules){
             moveRule.reset();
         }
-    }
-
-    void setPawnNumber(int pawnNumber) {
-        this.pawnNumber = pawnNumber;
     }
 
     private void sortRules() {

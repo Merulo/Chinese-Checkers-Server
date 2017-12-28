@@ -24,7 +24,7 @@ public class Hub extends Thread implements NetworkManager {
     private List<MoveRule> moveRules;
 
     //creates the lists and adds 10 lobbies
-    Hub(){
+    public Hub(){
         lobbies = new ArrayList<>();
         players = new ArrayList<>();
         for(int i = 0; i < 10; i++){

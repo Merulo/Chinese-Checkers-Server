@@ -19,7 +19,7 @@ public class AggressiveStrategy implements Strategy {
         //pawns in home fields
         ArrayList<MapPoint> inHome = new ArrayList<>();
         //moves
-        ArrayList<MapPoint> moves = new ArrayList<>();
+        ArrayList<MapPoint> moves;
 
         //fill pawns in home and not in home
         for(MapPoint mapPoint : map.getMyPawns(abstractPlayer)){
@@ -39,9 +39,10 @@ public class AggressiveStrategy implements Strategy {
                 break;
             }
         }
+
+
         //should never happen!
         if(freeTile == null){
-            System.out.println("SKIP");
             return "Skip;";
         }
         //sort the pawns to find the closes one (aggressive strategy)
@@ -53,23 +54,13 @@ public class AggressiveStrategy implements Strategy {
 
         //get the pawns not in home which can move closer than the old distance
         for(MapPoint mapPoint : notInHome){
-            int oldDistance = mapPoint.getDistance(freeTile);
-            moves.clear();
-            moves.add(mapPoint);
-            int newDistance = getBestMove(freeTile, mapPoint, moveDecorator, moves, abstractPlayer);
-            if (newDistance < oldDistance){
-                System.out.println("I GOT A MOVE!");
-                for(MapPoint mp : moves){
-                    System.out.println("TEST2 " + mp.getX() + " " + mp.getY());
-                }
+            moves = getBestMove(freeTile, mapPoint, moveDecorator, abstractPlayer);
+
+            if (moves.size() > 0){
                 return listToString(moves);
             }
         }
-        System.out.println("NO MOVE");
-
-
-
-        return "";
+        return "Skip;";
     }
 
     private String listToString(ArrayList<MapPoint> moves){
@@ -82,37 +73,21 @@ public class AggressiveStrategy implements Strategy {
 
     }
 
-    private int getBestMove(
+    private ArrayList<MapPoint> getBestMove(
             MapPoint target,
             MapPoint mapPoint,
             MoveDecorator moveDecorator,
-            ArrayList<MapPoint> moves,
-            AbstractPlayer player){
+            AbstractPlayer player) {
 
-        MapPoint newPosition = mapPoint;
         ArrayList<MoveRule> moveRules = moveDecorator.getMoveRules();
+        ArrayList<MapPoint> mapPoints = new ArrayList<>();
 
-        System.out.println("Starting from :" + mapPoint.getX() + "," + mapPoint.getY());
-
-        for(MoveRule moveRule : moveRules){
-            MapPoint tmp = moveRule.getBestMove(moveDecorator.getMap(), target, mapPoint, player);
-            if(newPosition.getDistance(target) > tmp.getDistance(target)){
-                System.out.println("Adding :" + tmp.getX() + "," +tmp.getY()+ " ");
-                newPosition = target;
-                moves.add(tmp);
-                for(MapPoint mp : moves){
-                    System.out.println("TEST1 " + mp.getX() + " " + mp.getY());
-                }
-                return newPosition.getDistance(target);
-            }
+        for(MoveRule moveRule : moveRules) {
+            mapPoints = moveRule.getBestMove(moveDecorator.getMap(), target, mapPoint, player);
         }
-        //reset
-        if(newPosition != mapPoint) {
-            moves.add(newPosition);
-            moveDecorator.checkMove(moves, player);
-            return getBestMove(target, newPosition, moveDecorator, moves, player);
+        if(mapPoints == null){
+            mapPoints = new ArrayList<>();
         }
-
-        return target.getDistance(newPosition);
+        return mapPoints;
     }
 }

@@ -11,6 +11,10 @@ public class MapPoint {
         this.y = y;
     }
 
+    public void print(){
+        System.out.println("(" + x + "," + y + ")");
+    }
+
     //default constructor
     public MapPoint(){
         x = 0;
@@ -41,7 +45,39 @@ public class MapPoint {
 
     //calculates distance according to our metric
     public int getDistance(MapPoint target){
-        return Math.abs(x - target.getX()) + Math.abs(y - target.getY()) - (Math.abs(target.getX() - x - (target.getY() - y) ))/2;
+
+        if(x == target.getX()){
+            return Math.abs(x - target.getX()) + Math.abs(y - target.getY());
+        }
+
+        if(y == target.getY()) {
+            return Math.abs(x - target.getX()) + Math.abs(y - target.getY());
+        }
+
+        int counter = 0;
+        int tx1 = x;
+        int ty1 = y;
+
+        if(x > target.getX() && y > target.getY()){
+            return Math.abs(x - target.getX()) + Math.abs(y - target.getY());
+        }
+        if(x < target.getX() && y < target.getY()){
+            return Math.abs(x - target.getX()) + Math.abs(y - target.getY());
+        }
+
+        while(tx1 != target.getX() && ty1 != target.getY()){
+            if(x < target.getX()){
+                tx1++;
+                ty1--;
+            }
+            else{
+                tx1--;
+                ty1++;
+            }
+            counter++;
+        }
+
+        return Math.abs(x - target.getX()) + Math.abs(y - target.getY()) - counter;
     }
 
     public boolean areAligned(MapPoint target){
