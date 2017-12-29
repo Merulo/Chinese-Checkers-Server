@@ -19,7 +19,7 @@ public class Lobby implements NetworkManager {
     //variable with the settings of the game
     private Settings settings;
     //max countdown
-    private final int maxCountDown = 3;
+    private final int maxCountDown = 3  ;
     //countdown variable
     private int countDown = maxCountDown;
     //countdown time variable
@@ -177,6 +177,10 @@ public class Lobby implements NetworkManager {
                 removeAdminBots();
             }
         }
+        if(players.size() > 0) {
+            players.get(0).sendMessage("Master;");
+        }
+
     }
 
     //returns game data which can be send to other players
@@ -275,9 +279,9 @@ public class Lobby implements NetworkManager {
         if ((System.currentTimeMillis() - this.startMillis) / 1000.0 > 1) {
             startMillis = System.currentTimeMillis();
             countDown--;
-            for (AbstractPlayer player : players) {
-                player.sendMessage("Countdown;" + Integer.toString(countDown) + ";");
-            }
+
+            resendMessage("Countdown to start:" + Integer.toString(countDown), null);
+
         }
     }
 

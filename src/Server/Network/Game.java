@@ -106,7 +106,7 @@ public class Game implements NetworkManager {
                 break;
             }
             case "Skip":{
-                handleSkip();
+                handleSkip(abstractPlayer);
                 break;
             }
             case "Leave":{
@@ -251,9 +251,11 @@ public class Game implements NetworkManager {
         return players.get(tmp);
     }
 
-    private void handleSkip(){
-        currentPlayer = getNextCurrentPlayer();
-        currentPlayer.sendMessage("YourTurn;");
+    private void handleSkip(AbstractPlayer abstractPlayer){
+        if(currentPlayer == abstractPlayer) {
+            currentPlayer = getNextCurrentPlayer();
+            currentPlayer.sendMessage("YourTurn;");
+        }
     }
 
     private ArrayList<MapPoint> parseStringToArrayOfMapPoints(String message){

@@ -127,6 +127,10 @@ public class Map {
         return mapPoints;
     }
 
+    public void replacePlayer(AbstractPlayer oldplayer, AbstractPlayer newplayer){
+
+    }
+
     public void printMap(){
         for(Field fieldArray[] : map){
             for(Field field : fieldArray){
