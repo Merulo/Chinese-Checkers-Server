@@ -156,9 +156,6 @@ public class Game implements NetworkManager {
         player.setNetworkManager(hub);
         hub.sendGame(lobby);
         hub.addPlayer(player);
-
-
-        //TODO: IMPLEMENT REPLACE PLAYER WITH COMPUTER
     }
 
     //returns the current time stamp
@@ -194,6 +191,10 @@ public class Game implements NetworkManager {
             return;
         }
 
+        if(abstractPlayer instanceof ComputerPlayer && haveAllHumansWon()){
+            return;
+        }
+
         ArrayList<MapPoint> mapPoints = parseStringToArrayOfMapPoints(message);
         if(!(mapPoints.size() > 0)){
             abstractPlayer.sendMessage("IncorrectMove;");
@@ -204,7 +205,6 @@ public class Game implements NetworkManager {
 
         boolean result =  moveDecorator.checkMove(mapPoints, abstractPlayer);
 
-        System.out.println("BOOLEAN: " + result);
         if(result){
             handleConfirmedMove(first, last, abstractPlayer);
 
@@ -226,6 +226,19 @@ public class Game implements NetworkManager {
                 return false;
             }
         }
+        return true;
+    }
+
+    private boolean haveAllHumansWon(){
+        for(AbstractPlayer abstractPlayer : players){
+            if(abstractPlayer instanceof HumanPlayer){
+                if(!abstractPlayer.getHasWon()){
+                    return false;
+                }
+            }
+        }
+
+
         return true;
     }
 
@@ -252,6 +265,9 @@ public class Game implements NetworkManager {
     }
 
     private void handleSkip(AbstractPlayer abstractPlayer){
+        if(abstractPlayer instanceof ComputerPlayer && haveAllHumansWon()){
+            return;
+        }
         if(currentPlayer == abstractPlayer) {
             currentPlayer = getNextCurrentPlayer();
             currentPlayer.sendMessage("YourTurn;");
@@ -279,8 +295,6 @@ public class Game implements NetworkManager {
         //map.printMap();
         tmp+=Integer.toString(first.getY()) + "," + Integer.toString(first.getX()) + ";";
         tmp+=Integer.toString(last.getY()) + "," + Integer.toString(last.getX()) + ";";
-
-        System.out.println("Sending: " + tmp);
 
         for (AbstractPlayer player : players){
             player.sendMessage(tmp);

@@ -128,7 +128,16 @@ public class Map {
     }
 
     public void replacePlayer(AbstractPlayer oldplayer, AbstractPlayer newplayer){
-
+        for(Field fieldArray[] : map) {
+            for (Field field : fieldArray) {
+                if(field.getPlayerOnField() == oldplayer){
+                    field.setPlayerOnField(newplayer);
+                }
+                if(field.getHomePlayer() == oldplayer){
+                    field.setHomePlayer(newplayer);
+                }
+            }
+        }
     }
 
     public void printMap(){

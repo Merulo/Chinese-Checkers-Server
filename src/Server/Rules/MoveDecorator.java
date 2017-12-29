@@ -92,7 +92,7 @@ public class MoveDecorator {
     }
 
     public void replacePlayer(AbstractPlayer oldPlayer, AbstractPlayer newPlayer){
-        //TODO: REPLACE PLAYERS POSITION AND HOME IN MAP CLASS
+        map.replacePlayer(oldPlayer, newPlayer);
     }
 
 

@@ -66,33 +66,7 @@ public class TwoTilesNoPawnsRule extends MoveRule {
 
     @Override
     public ArrayList<MapPoint> getBestMove(Map map, MapPoint target, MapPoint starting, AbstractPlayer player){
-        int distance = target.getDistance(starting);
-        ArrayList<MapPoint> move = new ArrayList<>();
-
-        for(int i = -3; i <= 3; i++){
-            for(int j = -3; j <= 3; j++){
-                if(map.getField(new MapPoint(starting.getX() + i, starting.getY() + j))!= null){
-                    MapPoint mp = new MapPoint(starting.getX() + i, starting.getY() + j);
-
-                    int tmpx = Math.abs(starting.getX() - mp.getX());
-                    int tmpy = Math.abs(starting.getY() - mp.getY());
-
-                    //TODO: IMPLEMENT TWO TILES NO PAWNS RULE FOR BOTS AND PLAYERS
-
-                    move.clear();
-                    reset();
-                    move.add(starting);
-                    move.add(mp);
-
-                    if(checkMove(map, move, player,false) == -1){
-                        continue;
-                    }
-                    if (target.getDistance(mp) < distance){
-                        return move;
-                    }
-                }
-            }
-        }
+        //TODO: IMPLEMENT THIS METHOD!
         return null;
     }
 }
