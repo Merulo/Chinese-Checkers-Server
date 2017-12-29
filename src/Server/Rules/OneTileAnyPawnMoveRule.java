@@ -44,6 +44,10 @@ public class OneTileAnyPawnMoveRule extends MoveRule {
             return -1;
         }
 
+        if(map.getField(starting).getHomePlayer() == abstractPlayer){
+            return -1;
+        }
+
         if (starting.getDistance(ending) != 2) {
 
             return -1;
@@ -94,6 +98,7 @@ public class OneTileAnyPawnMoveRule extends MoveRule {
                     if(checkMove(map, move, player,false) == -1){
                         continue;
                     }
+
                     if (target.getDistance(mp) < distance){
                         return move;
                     }

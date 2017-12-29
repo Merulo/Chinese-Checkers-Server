@@ -48,6 +48,11 @@ public class Game implements NetworkManager {
               player.setNetworkManager(this);
           }
         }
+
+        for(AbstractPlayer player : this.players){
+            player.sendMessage("YourColor;" + player.getData());
+        }
+
         currentPlayer.sendMessage("YourTurn;");
     }
 

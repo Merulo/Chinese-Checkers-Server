@@ -233,6 +233,7 @@ public class Lobby implements NetworkManager {
             hub.sendGame(this);
         }
         else {
+            System.out.println("sending settings");
             p.sendMessage(settings.getDetailedData(players.size()));
         }
     }

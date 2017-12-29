@@ -102,9 +102,12 @@ public class Settings {
             }
             case "Size":{
                 if(size != Integer.parseInt(values)) {
-                    size = Integer.parseInt(values);
-                    moveDecorator.setPawnNumber(sizeToPawnCount());
-                    return true;
+                    if(Integer.parseInt(values) > 1) {
+                        size = Integer.parseInt(values);
+                        moveDecorator.setPawnNumber(sizeToPawnCount());
+                        return true;
+                    }
+                    return false;
                 }
                 return false;
             }
