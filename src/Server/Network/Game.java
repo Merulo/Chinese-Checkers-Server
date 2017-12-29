@@ -38,6 +38,8 @@ public class Game implements NetworkManager {
         map.setPlayers(players);
         map.setUpMap();
 
+        players.get(0).setReady(false);
+
         currentPlayer = players.get(new Random().nextInt(players.size()));
 
         for(AbstractPlayer player : this.players){
@@ -107,6 +109,10 @@ public class Game implements NetworkManager {
                 handleSkip();
                 break;
             }
+            case "Leave":{
+                replacePlayerWithComputer(abstractPlayer);
+                break;
+            }
         }
     }
 
@@ -122,7 +128,37 @@ public class Game implements NetworkManager {
 
     private void replacePlayerWithComputer(AbstractPlayer player){
         System.out.println(player.getNick() + " should be replaced by Computer");
-        //TODO: IMPLEMENT THIS METHOD
+
+
+        for(int i =0; i < players.size(); i++){
+            if(players.get(i) == player){
+                ComputerPlayer computerPlayer = new ComputerPlayer();
+                computerPlayer.setMoveDecorator(moveDecorator);
+                computerPlayer.setNetworkManager(this);
+                players.add(i, computerPlayer);
+                players.remove(player);
+
+                if(areThereOnlyBotsInGame()){
+                    break;
+                }
+
+                if(currentPlayer == player){
+                    currentPlayer = getNextCurrentPlayer();
+                    currentPlayer.sendMessage("YourTurn;");
+                }
+
+                moveDecorator.replacePlayer(player, computerPlayer);
+
+                break;
+            }
+        }
+
+        player.setNetworkManager(hub);
+        hub.sendGame(lobby);
+        hub.addPlayer(player);
+
+
+        //TODO: IMPLEMENT REPLACE PLAYER WITH COMPUTER
     }
 
     //returns the current time stamp
@@ -136,6 +172,8 @@ public class Game implements NetworkManager {
             result+= "Server";
         }
         else{
+            message = SimpleParser.cut(message);
+            System.out.println("TESTING: " + message);
             result += abstractPlayer.getNick();
         }
 
@@ -236,7 +274,7 @@ public class Game implements NetworkManager {
         moveDecorator.doMove(first, last, abstractPlayer);
 
         String tmp = "Move;";
-        map.printMap();
+        //map.printMap();
         tmp+=Integer.toString(first.getY()) + "," + Integer.toString(first.getX()) + ";";
         tmp+=Integer.toString(last.getY()) + "," + Integer.toString(last.getX()) + ";";
 

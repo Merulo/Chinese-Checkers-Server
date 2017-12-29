@@ -79,21 +79,20 @@ public class MoveDecorator {
                     copy.getField(mapPoints.get(result)).setPlayerOnField(abstractPlayer);
                     //copy.printMap();
 
-
-
                     mapPoints.subList(0, result).clear();
                     changed = true;
                     moveApplied = true;
                     break;
-                }
-                for(MapPoint mapPoint : mapPoints){
-                    mapPoint.print();
                 }
             }
             if (!changed){
                 return false;
             }
         }
+    }
+
+    public void replacePlayer(AbstractPlayer oldPlayer, AbstractPlayer newPlayer){
+        //TODO: REPLACE PLAYERS POSITION AND HOME IN MAP CLASS
     }
 
 

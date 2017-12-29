@@ -16,6 +16,7 @@ import java.util.Comparator;
 public class AggressiveStrategy implements Strategy {
 
     //returns move as String, is not game depended
+    //TODO: MAKE THIS METHOD SHORTER!
     public String getMove(MoveDecorator moveDecorator, AbstractPlayer abstractPlayer){
         Map map = moveDecorator.getMap();
         //all the home fields
@@ -90,21 +91,21 @@ public class AggressiveStrategy implements Strategy {
     }
 
     //returns the best move given the current field and target
+    //TODO: MAKE THIS A RECURSION!
     private ArrayList<MapPoint> getBestMove(
             MapPoint target,
             MapPoint mapPoint,
             MoveDecorator moveDecorator,
             AbstractPlayer player) {
         //result array
-        ArrayList<MapPoint> mapPoints = null;
+        ArrayList<MapPoint> mapPoints;
 
         for(MoveRule moveRule : moveDecorator.getMoveRules()) {
             mapPoints = moveRule.getBestMove(moveDecorator.getMap(), target, mapPoint, player);
+            if(mapPoints != null){
+                return mapPoints;
+            }
         }
-        //do not return null!
-        if(mapPoints == null){
-            mapPoints = new ArrayList<>();
-        }
-        return mapPoints;
+        return new ArrayList<>();
     }
 }

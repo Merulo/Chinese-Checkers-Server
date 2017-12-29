@@ -91,6 +91,14 @@ public class Lobby implements NetworkManager {
     @Override
     public synchronized void enter(AbstractPlayer client, int number){
         System.out.println("MOVING FROM LOBBY TO HUB");
+        int tmp =0;
+
+        for(AbstractPlayer abstractPlayer : players){
+            if(abstractPlayer == client){
+                break;
+            }
+            tmp++;
+        }
 
         if(players.get(0) == client){
             if(players.size() > 1)
@@ -98,7 +106,7 @@ public class Lobby implements NetworkManager {
         }
         players.remove(client);
         for(AbstractPlayer abstractPlayer : players){
-            abstractPlayer.sendMessage("Remove;" + client.getNick() + ";");
+            abstractPlayer.sendMessage("Remove;" + Integer.toString(tmp)+ ";");
         }
 
         removeAdminBots();
@@ -164,7 +172,7 @@ public class Lobby implements NetworkManager {
                 players.remove(computer);
 
                 for(AbstractPlayer player : players){
-                    player.sendMessage("Remove;" + computer.getNick());
+                    player.sendMessage("Remove;0;");
                 }
                 removeAdminBots();
             }

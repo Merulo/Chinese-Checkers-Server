@@ -77,7 +77,7 @@ public class TwoTilesNoPawnsRule extends MoveRule {
                     int tmpx = Math.abs(starting.getX() - mp.getX());
                     int tmpy = Math.abs(starting.getY() - mp.getY());
 
-                    //TODO: IMPLEMENT
+                    //TODO: IMPLEMENT TWO TILES NO PAWNS RULE FOR BOTS AND PLAYERS
 
                     move.clear();
                     reset();
