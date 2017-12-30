@@ -101,7 +101,7 @@ public class Hub extends Thread implements NetworkManager {
     }
 
     //add new socket to the players list
-    synchronized void addClient(Socket socket){
+    public synchronized void addClient(Socket socket){
         System.out.println("NEW HUB CLIENT");
         players.add(new HumanPlayer(socket, this));
         players.get(players.size() - 1).start();
@@ -109,7 +109,7 @@ public class Hub extends Thread implements NetworkManager {
     }
 
     //sends one lobby data to all the players
-    synchronized void sendGame(Lobby lobby){
+    public synchronized void sendGame(Lobby lobby){
         for (AbstractPlayer client : players){
             client.sendMessage(lobby.getGameData());
         }

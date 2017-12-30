@@ -77,17 +77,17 @@ public class OneTileAnyPawnMoveRule extends MoveRule {
                 if(map.getField(new MapPoint(starting.getX() + i, starting.getY() + j))!= null){
                     MapPoint mp = new MapPoint(starting.getX() + i, starting.getY() + j);
 
-                    float tmpx = (starting.getX() + mp.getX())/2;
-                    float tmpy = (starting.getY() + mp.getY())/2;
+                    float tmpX = (starting.getX() + mp.getX())/2;
+                    float tmpY = (starting.getY() + mp.getY())/2;
 
-                    if((int) tmpx != tmpx){
+                    if((int) tmpX != tmpX){
                         continue;
                     }
 
-                    if((int) tmpy != tmpy){
+                    if((int) tmpY != tmpY){
                         continue;
                     }
-                    MapPoint middle = new MapPoint((int)tmpx , (int) tmpy);
+                    MapPoint middle = new MapPoint((int)tmpX , (int) tmpY);
 
                     move.clear();
                     reset();

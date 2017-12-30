@@ -202,7 +202,6 @@ public class Lobby implements NetworkManager {
             countDown--;
 
             resendMessage("Countdown to start:" + Integer.toString(countDown), null);
-
         }
     }
 

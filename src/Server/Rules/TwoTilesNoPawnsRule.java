@@ -66,8 +66,51 @@ public class TwoTilesNoPawnsRule extends MoveRule {
 
     @Override
     public ArrayList<MapPoint> getBestMove(Map map, MapPoint target, MapPoint starting, AbstractPlayer player){
-        //TODO: IMPLEMENT THIS METHOD!
+        ArrayList<MapPoint> moves;
+
+        for(int i = -1; i <= 1; i++){
+            for(int j = -1; j <= 1; j++){
+                moves = testThisConfiguration(i, j, map, target, starting, player);
+                if(moves != null){
+                    return moves;
+                }
+            }
+        }
+
         return null;
+    }
+
+    private ArrayList<MapPoint> testThisConfiguration(int dx, int dy, Map map, MapPoint target, MapPoint starting, AbstractPlayer player){
+        //this is way faster than for's
+        //for's have to check 49 cases, here we have 6
+        ArrayList<MapPoint> move = new ArrayList<>();
+        int distance = target.getDistance(starting);
+
+        move.clear();
+        move.add(starting);
+        move.add(new MapPoint(starting.getX() - dx   , starting.getY() - dy));
+        move.add(new MapPoint(starting.getX() -(dx*2), starting.getY() -(dy * 2)));
+        move.add(new MapPoint(starting.getX() -(dx*3), starting.getY() -(dy * 3)));
+
+        if(testIfFieldsNotNull(move, map)){
+            reset();
+            if(checkMove(map, move, player,false) != -1){
+                if (target.getDistance(move.get(move.size() -1)) < distance){
+                    return move;
+                }
+            }
+        }
+        return null;
+    }
+
+    private boolean testIfFieldsNotNull(ArrayList<MapPoint> mapPoints, Map map){
+        for(MapPoint mapPoint : mapPoints){
+            if(map.getField(mapPoint) == null){
+                return false;
+            }
+        }
+
+        return true;
     }
 }
 

@@ -11,7 +11,6 @@ import Server.SimpleParser;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Random;
 
 /**@author Damian Nowak
@@ -19,7 +18,7 @@ import java.util.Random;
  */
 public class Game implements NetworkManager {
     //list of players
-    volatile private List<AbstractPlayer> players;
+    volatile private ArrayList<AbstractPlayer> players;
     //the main hub
     private Hub hub;
     //the main lobby
@@ -29,7 +28,7 @@ public class Game implements NetworkManager {
     //current player
     private AbstractPlayer currentPlayer;
 
-    Game(ArrayList<AbstractPlayer> players, Hub hub, Lobby lobby, MoveDecorator moveDecorator){
+    public Game(ArrayList<AbstractPlayer> players, Hub hub, Lobby lobby, MoveDecorator moveDecorator){
         this.hub = hub;
         this.lobby = lobby;
         this.players = players;

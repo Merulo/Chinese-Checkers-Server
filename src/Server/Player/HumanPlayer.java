@@ -24,7 +24,6 @@ public class HumanPlayer extends AbstractPlayer {
         catch (IOException e) {
             System.out.println("Player died: " + e);
         }
-        output.println("WELCOME");
     }
 
     @Override
