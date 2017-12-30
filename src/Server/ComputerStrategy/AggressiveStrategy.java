@@ -18,6 +18,9 @@ public class AggressiveStrategy implements Strategy {
     //returns move as String, is not game depended
     //TODO: MAKE THIS METHOD SHORTER!
     public String getMove(MoveDecorator moveDecorator, AbstractPlayer abstractPlayer){
+        if(abstractPlayer == null || moveDecorator == null){
+            return "Skip;";
+        }
         Map map = moveDecorator.getMap();
         //all the home fields
         ArrayList<MapPoint> home = map.getMyHome(abstractPlayer);

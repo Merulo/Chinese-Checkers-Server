@@ -3,11 +3,17 @@ package Server.Network;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class Server {
-    private ServerSocket serverSocket;
-    private int port;
-    private Hub hub;
+/**@author Damian Nowak
+ * Accepts new clients as sockets and sends them to Hub
+ */
 
+public class Server {
+    //server socket
+    private ServerSocket serverSocket;
+    //port number
+    private int port;
+    //main game hub
+    private Hub hub;
 
     //create object and set up port
     public Server(int port){

@@ -42,7 +42,7 @@ public class HumanPlayer extends AbstractPlayer {
             }
         }
         catch (IOException e) {
-            System.out.println("Player died: " + e);
+            System.out.println("Player was removed");
         }
     }
 

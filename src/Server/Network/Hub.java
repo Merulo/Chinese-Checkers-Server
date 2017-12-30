@@ -12,9 +12,10 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-//Hub class, extends thread
-//this allows to handle the lobbies!
-
+/** @author Damian Nowak
+ * Hub class, creates new Human players
+ * Sends general lobby information
+ */
 public class Hub extends Thread implements NetworkManager {
     //list of lobbies opened on status
     private List<Lobby> lobbies;
@@ -75,6 +76,7 @@ public class Hub extends Thread implements NetworkManager {
         }
     }
 
+    //parses the message
     @Override
     public synchronized void parse(AbstractPlayer abstractPlayer, String message){
         String type = SimpleParser.parse(message);
@@ -91,6 +93,11 @@ public class Hub extends Thread implements NetworkManager {
                 break;
             }
         }
+    }
+
+    //returns list of rules
+    public List<MoveRule> getMoveRules() {
+        return moveRules;
     }
 
     //add new socket to the players list
@@ -131,7 +138,4 @@ public class Hub extends Thread implements NetworkManager {
         }
     }
 
-    public List<MoveRule> getMoveRules() {
-        return moveRules;
-    }
 }

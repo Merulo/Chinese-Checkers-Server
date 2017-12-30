@@ -1,43 +1,37 @@
 package Server.Map;
 
 import Server.Player.AbstractPlayer;
-
 import java.util.ArrayList;
 
+/**@author Damian Nowak
+ * Contains 2D array of fields and assigns players to each field
+ */
 public class Map {
     //pawns count
     private int pawnNumber;
     //array with map
     private Field map[][];
-    //list with players
-    private ArrayList<AbstractPlayer> players;
 
     //set the pawn number
     public Map(int pawnNumber){
         this.pawnNumber = pawnNumber;
     }
 
+    //returns the new instance of map identical with the one this method is called on
     public Map copy(){
         Map map = new Map(pawnNumber);
-        map.setPlayers(players);
-        map.setUpMap();
+        map.setUpMap(null);
 
         for (int i = 0; i < this.map.length; i++) {
             for(int j = 0; j < this.map[0].length; j++){
                 map.setField(i, j, this.map[i][j].copy());
             }
         }
-
-
         return map;
     }
 
-    public void setPlayers(ArrayList<AbstractPlayer> players) {
-        this.players = players;
-    }
-
-    //create map if null
-    public void setUpMap(){
+    //create map if map is empty
+    public void setUpMap(ArrayList<AbstractPlayer> players){
         if (map == null) {
             int rows = calculateRowsNumber();
             int size = rows*4 + 1;
@@ -65,11 +59,13 @@ public class Map {
                     map[i + rows][j + rows *3 + 1].setPartOfMap(true);
                 }
             }
-            setUpStartingPosition();
+            if(players != null) {
+                setUpStartingPosition(players);
+            }
         }
-        //printMap();
     }
 
+    //returns true if the given player has won the game
     public boolean checkWin(AbstractPlayer abstractPlayer){
         for(Field fieldArray[] : map) {
             for (Field field : fieldArray) {
@@ -103,6 +99,7 @@ public class Map {
         return null;
     }
 
+    //returns list of coordinates with given player pawns
     public ArrayList<MapPoint> getMyPawns(AbstractPlayer player){
         ArrayList<MapPoint> mapPoints = new ArrayList<>();
         for(int i = 0; i < map.length; i++){
@@ -115,6 +112,7 @@ public class Map {
         return mapPoints;
     }
 
+    //returns list of coordinates with given player home fields
     public ArrayList<MapPoint> getMyHome(AbstractPlayer player){
         ArrayList<MapPoint> mapPoints = new ArrayList<>();
         for(int i = 0; i < map.length; i++){
@@ -127,78 +125,22 @@ public class Map {
         return mapPoints;
     }
 
-    public void replacePlayer(AbstractPlayer oldplayer, AbstractPlayer newplayer){
+    //replaces one player with other
+    public void replacePlayer(AbstractPlayer oldPlayer, AbstractPlayer newPlayer){
         for(Field fieldArray[] : map) {
             for (Field field : fieldArray) {
-                if(field.getPlayerOnField() == oldplayer){
-                    field.setPlayerOnField(newplayer);
+                if(field.getPlayerOnField() == oldPlayer){
+                    field.setPlayerOnField(newPlayer);
                 }
-                if(field.getHomePlayer() == oldplayer){
-                    field.setHomePlayer(newplayer);
+                if(field.getHomePlayer() == oldPlayer){
+                    field.setHomePlayer(newPlayer);
                 }
             }
         }
     }
 
-    public void printMap(){
-        for(Field fieldArray[] : map){
-            for(Field field : fieldArray){
-                if(field.getPartOfMap()){
-                    if(field.getPlayerOnField()!=null) {
-                        System.out.print("P");
-                    }
-                    else{
-                        System.out.print("N");
-                    }
-                }
-                else{
-                    System.out.print("X");
-                }
-            }
-            System.out.println("");
-        }
-        /*
-        for(Field fieldArray[] : map){
-            for(Field field : fieldArray){
-                if(field.getPartOfMap()){
-                    if(field.getHomePlayer()!=null) {
-                        System.out.print("H");
-                    }
-                    else{
-                        System.out.print("N");
-                    }
-                }
-                else{
-                    System.out.print("X");
-                }
-            }
-            System.out.println("");
-        }*/
-    }
-
-    public void printMap(MapPoint mapPoint){
-        for(int i = 0; i < map.length; i++){
-            for(int j = 0; j < map[i].length; j++){
-                if(i == mapPoint.getX() && j == mapPoint.getY()){
-                    System.out.print("C");
-                }
-                else if(map[i][j].getPartOfMap()){
-                    if(map[i][j].getPlayerOnField()!=null) {
-                        System.out.print("P");
-                    }
-                    else{
-                        System.out.print("N");
-                    }
-                }
-                else{
-                    System.out.print("X");
-                }
-            }
-            System.out.println("");
-        }
-    }
-
-    private void setUpStartingPosition(){
+    //sets up starting positions and fills them accordingly
+    private void setUpStartingPosition(ArrayList<AbstractPlayer> players){
         int i = 6/players.size();
         if(players.size() == 4){
             fillCorner(1, players.get(0));
@@ -228,6 +170,7 @@ public class Map {
         return row;
     }
 
+    //fills necessary fields for one player
     private void fillCorner(int option, AbstractPlayer player){
         int rows = calculateRowsNumber();
         for(int i = 0; i < rows; i++){
@@ -268,6 +211,7 @@ public class Map {
         }
     }
 
+    //sets field on given coordinates
     private void setField(int i, int j, Field f){
         map[i][j] = f;
     }

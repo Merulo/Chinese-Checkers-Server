@@ -14,6 +14,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
+/**@author Damian Nowak
+ * The Game class focuses on handling in game events
+ */
 public class Game implements NetworkManager {
     //list of players
     volatile private List<AbstractPlayer> players;
@@ -21,8 +24,6 @@ public class Game implements NetworkManager {
     private Hub hub;
     //the main lobby
     private Lobby lobby;
-    //map
-    private Map map;
     //MoveDecorator
     private MoveDecorator moveDecorator;
     //current player
@@ -33,10 +34,9 @@ public class Game implements NetworkManager {
         this.lobby = lobby;
         this.players = players;
         this.moveDecorator = moveDecorator;
-        map = new Map(moveDecorator.getPawnNumber());
+        Map map = new Map(moveDecorator.getPawnNumber());
         moveDecorator.setMap(map);
-        map.setPlayers(players);
-        map.setUpMap();
+        map.setUpMap(players);
 
         players.get(0).setReady(false);
 

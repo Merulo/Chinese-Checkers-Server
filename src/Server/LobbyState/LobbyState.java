@@ -39,6 +39,11 @@ public class LobbyState {
     //returns the state of lobby
     public State getState(){return state;}
 
+    //return the lobby
+    public Lobby getLobby() {
+        return lobby;
+    }
+
     //changes the state of lobby
     void setState(State state) {
         this.state = state;
@@ -54,10 +59,5 @@ public class LobbyState {
     void prevPhase(){
         state.changeStatePrev(this);
         lobby.sendDetailedGameData();
-    }
-
-    //return the lobby
-    Lobby getLobby() {
-        return lobby;
     }
 }

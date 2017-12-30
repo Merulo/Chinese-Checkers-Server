@@ -1,5 +1,8 @@
 package Server.Map;
 
+/**@author Damian Nowak
+ * 2D point with metric and alligment methods
+ */
 public class MapPoint {
     //coordinates of the point
     private int x;
@@ -11,6 +14,7 @@ public class MapPoint {
         this.y = y;
     }
 
+    //prints the point coordinates
     public void print(){
         System.out.println("(" + x + "," + y + ")");
     }
@@ -21,26 +25,19 @@ public class MapPoint {
         y = 0;
     }
 
+    //returns
+    public MapPoint copy(){
+        return new MapPoint(x, y);
+    }
+
     //gets x
     public int getX() {
         return x;
     }
 
-    public MapPoint copy(){
-        return new MapPoint(x, y);
-    }
-
     //gets y
     public int getY() {
         return y;
-    }
-
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public void setY(int y) {
-        this.y = y;
     }
 
     //calculates distance according to our metric
@@ -76,6 +73,7 @@ public class MapPoint {
         return Math.abs(x - target.getX()) + Math.abs(y - target.getY()) - counter;
     }
 
+    //returns true if points are Aligned
     public boolean areAligned(MapPoint target){
         int dx = target.getX() - x;
         int dy = target.getY() - y;
