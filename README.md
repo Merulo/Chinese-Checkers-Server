@@ -15,7 +15,7 @@ Crated for TP classes, 3rd semester, Computer Science, Faculty of Fundamental Pr
 ### About this program
 
 My main principle was to design this server in a way that represents everything what i have learned.
-The other think i had in mind when designing was openness for change and addition. Modification of this code for other games should be quite simple; additional interfaces might be necessary
+The other think i had in mind when designing was openness for change and addition. Modification of this code for other games should be quite simple; additional interfaces might be necessary.
 
 ### Usage
 
@@ -26,9 +26,11 @@ compile and start the [client](https://github.com/Merulo/Chinese-Checkers-Client
 
 ### TODO
 
-* Add GUI for server with command line for control.
+* Add GUI for server with command line for control of games flow
+* Add server settings
 * Add Logger-like class for logging changes and events
-* Establish different languages (currently we are using a mix of polish & english)
+* ~~Establish different languages (currently we are using a mix of polish & english)~~ Polish is main language
+* Add translator for communications
 
 ## Authors
 
