@@ -201,7 +201,7 @@ public class Lobby implements NetworkManager {
             startMillis = System.currentTimeMillis();
             countDown--;
 
-            resendMessage("Countdown to start:" + Integer.toString(countDown), null);
+            resendMessage("Odliczenia do rozpoczecia: " + Integer.toString(countDown), null);
         }
     }
 

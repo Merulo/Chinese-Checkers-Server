@@ -7,7 +7,7 @@ import javafx.scene.paint.Color;
 import java.util.Random;
 
 /**@author Damian Nowak
- * Human version of Abstract Player
+ * Computer version of Abstract Player
  */
 public class ComputerPlayer extends AbstractPlayer {
     private MoveDecorator moveDecorator;

@@ -93,7 +93,6 @@ public class AggressiveStrategy implements Strategy {
     }
 
     //returns the best move given the current field and target
-    //TODO: MAKE THIS A RECURSION!
     private ArrayList<MapPoint> getBestMove(
             MapPoint target,
             MapPoint mapPoint,

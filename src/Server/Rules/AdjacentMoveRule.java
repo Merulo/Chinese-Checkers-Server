@@ -5,8 +5,9 @@ import Server.Map.MapPoint;
 import Server.Player.AbstractPlayer;
 
 import java.util.ArrayList;
-
-//allows moving to the adjacent tile if it is free
+/**@author Damian Nowak
+ * Allows moving to the adjacent tile if it is frees
+ */
 public class AdjacentMoveRule extends MoveRule {
 
     public AdjacentMoveRule(){

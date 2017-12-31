@@ -6,6 +6,9 @@ import Server.Network.Lobby;
 import Server.Network.Hub;
 import Server.SimpleParser;
 
+/**@author Damian Nowak
+ * Class with lobby and game settings
+ */
 public class Settings {
     private LobbyState lobbyState;
     private String gameName;
@@ -23,10 +26,6 @@ public class Settings {
         moveDecorator.setPawnNumber(sizeToPawnCount());
         lobbyState = new LobbyState(lobby);
         size = 5;
-    }
-
-    public int maxPlayerNumber(){
-        return maxPlayerNumber;
     }
 
     public MoveDecorator getMoveDecorator(){

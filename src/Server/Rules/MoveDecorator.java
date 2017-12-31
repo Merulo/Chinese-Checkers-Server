@@ -5,7 +5,9 @@ import Server.Map.MapPoint;
 import Server.Player.AbstractPlayer;
 
 import java.util.*;
-
+/**@author Damian Nowak
+ * Decorates moves
+ */
 public class MoveDecorator {
     private ArrayList<MoveRule> moveRules;
     private int pawnNumber;

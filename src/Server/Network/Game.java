@@ -213,7 +213,7 @@ public class Game implements NetworkManager {
             handleConfirmedMove(first, last, abstractPlayer);
 
             if(checkWinning(abstractPlayer)){
-                resendMessage(abstractPlayer.getNick() + " has won the game!", null);
+                resendMessage(abstractPlayer.getNick() + " wygral gre!", null);
                 abstractPlayer.setHasWon(true);
             }
         }
@@ -250,7 +250,7 @@ public class Game implements NetworkManager {
         int tmp = 0;
 
         if(hasEverybodyWon()){
-            resendMessage("Everybody has won! End of game!", null);
+            resendMessage("Wszyscy wygrali! Koniec gry!", null);
         }
 
         for(int i = 0; i < players.size(); i++){

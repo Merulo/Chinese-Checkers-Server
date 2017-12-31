@@ -6,7 +6,9 @@ import Server.Player.AbstractPlayer;
 
 import java.util.ArrayList;
 
-//allows moving to the adjacent tile if it is free
+/**@author Damian Nowak
+ * Allows jumping two free tiles
+ */
 public class TwoTilesNoPawnsRule extends MoveRule {
 
     public TwoTilesNoPawnsRule(){

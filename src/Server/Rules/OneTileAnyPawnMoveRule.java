@@ -6,11 +6,13 @@ import Server.Player.AbstractPlayer;
 
 import java.util.ArrayList;
 
-//allows moving to the adjacent tile if it is free
+/**@author Damian Nowak
+ * Allows jumping one pawn
+ */
 public class OneTileAnyPawnMoveRule extends MoveRule {
 
     public OneTileAnyPawnMoveRule(){
-        priority = 10;
+        priority = 9;
         max_usages = 1;
         uses_left = max_usages;
     }
