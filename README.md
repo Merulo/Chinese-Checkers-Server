@@ -8,7 +8,7 @@ Crated for TP classes, 3rd semester, Computer Science, Faculty of Fundamental Pr
 * Show benefits and drawbacks of using UML before and after creating parts of program
 * Gain fundamental skills in programming cooperation
 * Encourage usage of version control system
-* Practise in real environment usage the design principles (GRASP)
+* Practise in real environment usage of GRASP
 * Master the recognition and usage of design patterns created by GOF
 * Learn about the benefits and drawbacks of tests and test driven development
 
