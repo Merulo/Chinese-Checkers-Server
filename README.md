@@ -5,7 +5,7 @@ Crated for TP classes, 3rd semester, Computer Science, Faculty of Fundamental Pr
 
 ### Main goals
 
-* Show benefits and drawbacks of using UML before and after creating parts of program.
+* Show benefits and drawbacks of using UML before and after creating parts of program
 * Gain fundamental skills in programming cooperation
 * Encourage usage of version control system
 * Practise in real environment usage the design principles (GRASP)
@@ -30,7 +30,7 @@ compile and start the [client](https://github.com/Merulo/Chinese-Checkers-Client
 * Add server settings
 * Add Logger-like class for logging changes and events
 * ~~Establish different languages (currently we are using a mix of polish & english)~~ Polish is main language
-* Add translator for communications
+* Add translator for server messages
 
 ## Authors
 
