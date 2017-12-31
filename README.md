@@ -15,7 +15,7 @@ Crated for TP classes, 3rd semester, Computer Science, Faculty of Fundamental Pr
 ### About this program
 
 My main principle was to design this server in a way that represents everything what i have learned.
-The other think i had in mind when designing was openness for change and addition. Modification of this code for other games should be quite simple; additional interfaces might be necessary.
+The other thing i had in mind when designing was openness for change and addition. Modification of this code for other games should be quite simple; additional interfaces might be necessary.
 
 ### Usage
 
