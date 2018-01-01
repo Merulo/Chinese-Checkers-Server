@@ -1,7 +1,7 @@
 # Chinese Checkers Server
 
 This is a server version for Chinese Checkers Game.
-Crated for TP classes, 3rd semester, Computer Science, Faculty of Fundamental Problems of Technology, Wrocław University of Science and Technology.
+Created for TP classes, 3rd semester, Computer Science, Faculty of Fundamental Problems of Technology, Wrocław University of Science and Technology.
 
 ### Main goals
 
@@ -14,23 +14,23 @@ Crated for TP classes, 3rd semester, Computer Science, Faculty of Fundamental Pr
 
 ### About this program
 
-My main principle was to design this server in a way that represents everything what i have learned.
-The other thing i had in mind when designing was openness for change and addition. Modification of this code for other games should be quite simple; additional interfaces might be necessary.
+My main principle was to design this server in a way that represents everything what I have learned.
+The other thing I had in mind when designing was openness for change and addition. Modification of this code for other games should be quite simple; additional interfaces might be necessary.
 
 ### Usage
 
-Due to lack of time and some missed milestones i was unable to create server GUI.
+Due to lack of time and some missed milestones I was unable to create server GUI.
 This resulted in almost non-configurable server.
 Compile and start the server then
 compile and start the [client](https://github.com/Merulo/Chinese-Checkers-Client).
 
-### TODO
+### Wish list:
 
-* Add GUI for server with command line for control of games flow
+* Add server GUI with a command line for control of games and players
 * Add server settings
 * Add Logger-like class for logging changes and events
 * ~~Establish different languages (currently we are using a mix of polish & english)~~ Polish is main language
-* Add translator for server messages
+* Add translator class for server messages
 
 ## Authors
 
