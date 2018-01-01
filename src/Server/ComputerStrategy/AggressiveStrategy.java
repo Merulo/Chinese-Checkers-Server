@@ -59,13 +59,13 @@ public class AggressiveStrategy implements Strategy {
             notInHome.sort(Comparator.comparing((MapPoint mp) -> -mp.getDistance(target)));
         }
 
-        String result = GetNotInHome(notInHome, freeTile, moveDecorator, abstractPlayer);
+        String result = GetMove(notInHome, freeTile, moveDecorator, abstractPlayer);
 
         if(result != null){
             return result;
         }
 
-        result = GetNotInHome(inHome, freeTile, moveDecorator, abstractPlayer);
+        result = GetMove(inHome, freeTile, moveDecorator, abstractPlayer);
 
         if(result != null){
             return result;
@@ -104,7 +104,7 @@ public class AggressiveStrategy implements Strategy {
     }
 
 
-    private String GetNotInHome(ArrayList<MapPoint> notInHome, MapPoint freeTile, MoveDecorator moveDecorator, AbstractPlayer abstractPlayer){
+    private String GetMove(ArrayList<MapPoint> notInHome, MapPoint freeTile, MoveDecorator moveDecorator, AbstractPlayer abstractPlayer){
         ArrayList<MapPoint> randomPoints = new ArrayList<>();
         ArrayList<MapPoint> moves;
 
