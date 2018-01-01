@@ -8,14 +8,14 @@ Crated for TP classes, 3rd semester, Computer Science, Faculty of Fundamental Pr
 * Show benefits and drawbacks of using UML before and after creating parts of program
 * Gain fundamental skills in programming cooperation
 * Encourage usage of version control system
-* Practise in real environment usage the design principles (GRASP)
+* Practise in real environment usage of GRASP
 * Master the recognition and usage of design patterns created by GOF
 * Learn about the benefits and drawbacks of tests and test driven development
 
 ### About this program
 
 My main principle was to design this server in a way that represents everything what i have learned.
-The other think i had in mind when designing was openness for change and addition. Modification of this code for other games should be quite simple; additional interfaces might be necessary.
+The other thing i had in mind when designing was openness for change and addition. Modification of this code for other games should be quite simple; additional interfaces might be necessary.
 
 ### Usage
 
