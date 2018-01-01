@@ -7,6 +7,7 @@ import Server.Rules.MoveDecorator;
 import Server.Rules.MoveRule;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 
 /**@author Damian Nowak
@@ -27,8 +28,6 @@ public class AggressiveStrategy implements Strategy {
         ArrayList<MapPoint> notInHome = new ArrayList<>();
         //pawns in home fields
         ArrayList<MapPoint> inHome = new ArrayList<>();
-        //moves
-        ArrayList<MapPoint> moves;
 
         //fill pawns in home and not in home
         for(MapPoint mapPoint : map.getMyPawns(abstractPlayer)){
@@ -60,23 +59,17 @@ public class AggressiveStrategy implements Strategy {
             notInHome.sort(Comparator.comparing((MapPoint mp) -> -mp.getDistance(target)));
         }
 
-        //get the pawns not in home which can move closer than the old distance
-        for(MapPoint mapPoint : notInHome){
-            moves = getBestMove(freeTile, mapPoint, moveDecorator, abstractPlayer);
+        String result = GetNotInHome(notInHome, freeTile, moveDecorator, abstractPlayer);
 
-            if (moves.size() > 0){
-                return listToString(moves);
-            }
-        }
-        //get the pawns not in home which can move closer than the old distance
-        for(MapPoint mapPoint : inHome){
-            moves = getBestMove(freeTile, mapPoint, moveDecorator, abstractPlayer);
-
-            if (moves.size() > 0){
-                return listToString(moves);
-            }
+        if(result != null){
+            return result;
         }
 
+        result = GetNotInHome(inHome, freeTile, moveDecorator, abstractPlayer);
+
+        if(result != null){
+            return result;
+        }
         return "Skip;";
     }
 
@@ -108,5 +101,44 @@ public class AggressiveStrategy implements Strategy {
             }
         }
         return new ArrayList<>();
+    }
+
+
+    private String GetNotInHome(ArrayList<MapPoint> notInHome, MapPoint freeTile, MoveDecorator moveDecorator, AbstractPlayer abstractPlayer){
+        ArrayList<MapPoint> randomPoints = new ArrayList<>();
+        ArrayList<MapPoint> moves;
+
+        if(notInHome.size() > 0){
+            int d = freeTile.getDistance(notInHome.get(0));
+
+            for(MapPoint mapPoint : notInHome){
+                if(d == mapPoint.getDistance(freeTile)){
+                    randomPoints.add(mapPoint.copy());
+                }
+                else{
+                    break;
+                }
+            }
+
+            Collections.shuffle(randomPoints);
+
+            for(MapPoint mapPoint : randomPoints){
+                moves = getBestMove(freeTile, mapPoint, moveDecorator, abstractPlayer);
+
+                if (moves.size() > 0){
+                    return listToString(moves);
+                }
+            }
+
+            //get the pawns not in home which can move closer than the old distance
+            for(MapPoint mapPoint : notInHome){
+                moves = getBestMove(freeTile, mapPoint, moveDecorator, abstractPlayer);
+
+                if (moves.size() > 0){
+                    return listToString(moves);
+                }
+            }
+        }
+        return null;
     }
 }
