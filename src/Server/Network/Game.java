@@ -194,6 +194,9 @@ public class Game implements NetworkManager {
             abstractPlayer.sendMessage("NotYourTurn;");
             return;
         }
+        if(hasEverybodyWon()){
+            return;
+        }
 
         if(abstractPlayer instanceof ComputerPlayer && haveAllHumansWon()){
             return;
@@ -251,6 +254,7 @@ public class Game implements NetworkManager {
 
         if(hasEverybodyWon()){
             resendMessage("Wszyscy wygrali! Koniec gry!", null);
+            return currentPlayer;
         }
 
         for(int i = 0; i < players.size(); i++){
