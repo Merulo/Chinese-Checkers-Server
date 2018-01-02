@@ -1,7 +1,7 @@
 <application>
   <component name="FindSettings">
-    <option name="customScope" value="Project 'Chinese-Checkers-Client'" />
-    <option name="defaultScopeName" value="Project 'Chinese-Checkers-Client'" />
-    <option name="SEARCH_SCOPE" value="Project 'Chinese-Checkers-Client'" />
+    <option name="customScope" value="File '[Chinese Checkers Client] - ...\src\Client\View\HubView.java'" />
+    <option name="defaultScopeName" value="File '[Chinese Checkers Client] - ...\src\Client\View\HubView.java'" />
+    <option name="SEARCH_SCOPE" value="File '[Chinese Checkers Client] - ...\src\Client\View\HubView.java'" />
   </component>
 </application>
