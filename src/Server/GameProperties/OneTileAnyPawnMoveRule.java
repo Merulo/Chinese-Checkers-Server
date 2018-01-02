@@ -27,6 +27,12 @@ public class OneTileAnyPawnMoveRule extends MoveRule {
         MapPoint middle     = mapPoints.get(1);
         MapPoint ending     = mapPoints.get(2);
 
+        if(map.getField(starting).getHomePlayer() == abstractPlayer){
+            if(map.getField(ending).getHomePlayer() != abstractPlayer){
+                return -1;
+            }
+        }
+
         //field is taken
         if(map.getField(ending).getPlayerOnField() != null){
             return -1;

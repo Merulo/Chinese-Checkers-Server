@@ -28,6 +28,12 @@ public class TwoTilesNoPawnsRule extends MoveRule {
         MapPoint middle2    = mapPoints.get(2);
         MapPoint ending     = mapPoints.get(3);
 
+        if(map.getField(starting).getHomePlayer() == abstractPlayer){
+            if(map.getField(ending).getHomePlayer() != abstractPlayer){
+                return -1;
+            }
+        }
+
         //field is taken
         if(map.getField(ending).getPlayerOnField() != null){
             return -1;
