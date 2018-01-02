@@ -1,4 +1,4 @@
-package Server.Rules;
+package Server.GameProperties;
 
 import Server.Map.Map;
 import Server.Map.MapPoint;

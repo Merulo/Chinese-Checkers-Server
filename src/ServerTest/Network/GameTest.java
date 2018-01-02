@@ -5,7 +5,7 @@ import Server.Network.Hub;
 import Server.Network.Lobby;
 import Server.Player.AbstractPlayer;
 import Server.Player.ComputerPlayer;
-import Server.Rules.MoveDecorator;
+import Server.GameProperties.MoveDecorator;
 import org.junit.Test;
 
 import java.lang.reflect.Field;

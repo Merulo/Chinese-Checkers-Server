@@ -1,4 +1,4 @@
-package Server.Rules;
+package Server.GameProperties;
 
 import Server.Map.Map;
 import Server.Map.MapPoint;
@@ -69,6 +69,8 @@ public class AdjacentMoveRule extends MoveRule {
     @Override
     public ArrayList<MapPoint> getBestMove(Map map, MapPoint target, MapPoint starting, AbstractPlayer player){
         int distance = target.getDistance(starting);
+
+        ArrayList<MapPoint> best = new ArrayList<>();
         ArrayList<MapPoint> move = new ArrayList<>();
 
         for(int i = -1; i <= 1; i++){
@@ -83,12 +85,20 @@ public class AdjacentMoveRule extends MoveRule {
                     if(checkMove(map, move, player,false) == -1){
                         continue;
                     }
+
                     if (target.getDistance(mp) < distance){
-                        return move;
+                        best.clear();
+                        for(MapPoint mapPoint : move){
+                            best.add(mapPoint.copy());
+                        }
+                        distance = target.getDistance(mp);
                     }
                 }
             }
         }
-        return null;
+        if(best.isEmpty()){
+            return null;
+        }
+        return best;
     }
 }

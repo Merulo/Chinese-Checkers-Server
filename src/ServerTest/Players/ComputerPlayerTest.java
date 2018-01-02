@@ -4,12 +4,11 @@ import Server.Map.Map;
 import Server.Network.Hub;
 import Server.Player.AbstractPlayer;
 import Server.Player.ComputerPlayer;
-import Server.Rules.MoveDecorator;
+import Server.GameProperties.MoveDecorator;
 import org.junit.Test;
 
 import java.util.ArrayList;
 
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;

@@ -15,12 +15,20 @@ public class Field {
     //the player of which the field is home
     private AbstractPlayer homePlayer;
 
-    //default creation
+    //default constructor
     public Field(){
         partOfMap = false;
         playerOnField = null;
         homePlayer = null;
     }
+
+    //advanced constructor for tests
+    public Field(boolean partOfMap, AbstractPlayer homePlayer){
+        this.partOfMap = partOfMap;
+        playerOnField = null;
+        this.homePlayer = homePlayer;
+    }
+
     //crates new instance of Field and copies this field settings
     public Field copy(){
         Field field = new Field();

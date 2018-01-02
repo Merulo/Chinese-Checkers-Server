@@ -1,4 +1,4 @@
-package Server.Rules;
+package Server.GameProperties;
 
 import Server.LobbyState.LobbyState;
 import Server.LobbyState.ReadyToStart;

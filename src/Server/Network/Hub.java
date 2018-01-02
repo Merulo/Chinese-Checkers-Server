@@ -2,10 +2,10 @@ package Server.Network;
 
 import Server.Player.AbstractPlayer;
 import Server.Player.HumanPlayer;
-import Server.Rules.AdjacentMoveRule;
-import Server.Rules.MoveRule;
-import Server.Rules.OneTileAnyPawnMoveRule;
-import Server.Rules.TwoTilesNoPawnsRule;
+import Server.GameProperties.AdjacentMoveRule;
+import Server.GameProperties.MoveRule;
+import Server.GameProperties.OneTileAnyPawnMoveRule;
+import Server.GameProperties.TwoTilesNoPawnsRule;
 import Server.SimpleParser;
 
 import java.net.Socket;

@@ -2,7 +2,7 @@ package Server.Player;
 
 import Server.ComputerStrategy.Strategy;
 import Server.ComputerStrategy.StrategyFactory;
-import Server.Rules.MoveDecorator;
+import Server.GameProperties.MoveDecorator;
 import javafx.scene.paint.Color;
 import java.util.Random;
 

@@ -7,7 +7,7 @@ import Server.Player.ComputerPlayer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import Server.Rules.Settings;
+import Server.GameProperties.Settings;
 import Server.SimpleParser;
 
 /** @author Damian Nowak

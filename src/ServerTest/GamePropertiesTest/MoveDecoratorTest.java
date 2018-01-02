@@ -1,8 +1,8 @@
-package ServerTest.RulesTest;
+package ServerTest.GamePropertiesTest;
 
 import Server.Map.Map;
-import Server.Rules.AdjacentMoveRule;
-import Server.Rules.MoveDecorator;
+import Server.GameProperties.AdjacentMoveRule;
+import Server.GameProperties.MoveDecorator;
 import org.junit.Test;
 
 import java.util.ArrayList;

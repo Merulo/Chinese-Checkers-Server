@@ -1,4 +1,4 @@
-package Server.Rules;
+package Server.GameProperties;
 
 import Server.Map.Map;
 import Server.Map.MapPoint;
@@ -72,7 +72,9 @@ public class OneTileAnyPawnMoveRule extends MoveRule {
     @Override
     public ArrayList<MapPoint> getBestMove(Map map, MapPoint target, MapPoint starting, AbstractPlayer player){
         int distance = target.getDistance(starting);
+
         ArrayList<MapPoint> move = new ArrayList<>();
+        ArrayList<MapPoint> best = new ArrayList<>();
 
         for(int i = -2; i <= 2; i++){
             for(int j = -2; j <= 2; j++){
@@ -102,12 +104,19 @@ public class OneTileAnyPawnMoveRule extends MoveRule {
                     }
 
                     if (target.getDistance(mp) < distance){
-                        return move;
+                        best.clear();
+                        for(MapPoint mapPoint : move){
+                            best.add(mapPoint.copy());
+                        }
+                        distance = target.getDistance(mp);
                     }
                 }
             }
         }
-        return null;
+        if(best.isEmpty()){
+            return null;
+        }
+        return best;
     }
 }
 

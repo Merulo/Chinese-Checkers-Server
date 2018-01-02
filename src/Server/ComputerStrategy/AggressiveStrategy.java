@@ -3,8 +3,8 @@ package Server.ComputerStrategy;
 import Server.Map.Map;
 import Server.Map.MapPoint;
 import Server.Player.AbstractPlayer;
-import Server.Rules.MoveDecorator;
-import Server.Rules.MoveRule;
+import Server.GameProperties.MoveDecorator;
+import Server.GameProperties.MoveRule;
 
 import java.util.ArrayList;
 import java.util.Collections;

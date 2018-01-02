@@ -1,7 +1,7 @@
-package ServerTest.RulesTest;
+package ServerTest.GamePropertiesTest;
 
 import Server.Network.Hub;
-import Server.Rules.Settings;
+import Server.GameProperties.Settings;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

@@ -1,4 +1,4 @@
-package Server.Rules;
+package Server.GameProperties;
 
 import Server.Map.Map;
 import Server.Map.MapPoint;
@@ -69,17 +69,28 @@ public class TwoTilesNoPawnsRule extends MoveRule {
     @Override
     public ArrayList<MapPoint> getBestMove(Map map, MapPoint target, MapPoint starting, AbstractPlayer player){
         ArrayList<MapPoint> moves;
+        ArrayList<MapPoint> best = null;
 
         for(int i = -1; i <= 1; i++){
             for(int j = -1; j <= 1; j++){
                 moves = testThisConfiguration(i, j, map, target, starting, player);
                 if(moves != null){
-                    return moves;
+                    if(best == null){
+                        best = moves;
+                    }
+                    else if(moves.get(moves.size() - 1).getDistance(target) < best.get(best.size() - 1).getDistance(target)){
+                        best = moves;
+                    }
                 }
             }
         }
-
-        return null;
+        if(best == null){
+            return null;
+        }
+        else if(best.isEmpty()){
+            return null;
+        }
+        return best;
     }
 
     private ArrayList<MapPoint> testThisConfiguration(int dx, int dy, Map map, MapPoint target, MapPoint starting, AbstractPlayer player){

@@ -5,7 +5,7 @@ import Server.Map.MapPoint;
 import Server.Player.AbstractPlayer;
 import Server.Player.ComputerPlayer;
 import Server.Player.HumanPlayer;
-import Server.Rules.MoveDecorator;
+import Server.GameProperties.MoveDecorator;
 import Server.SimpleParser;
 
 import java.text.SimpleDateFormat;
@@ -211,6 +211,8 @@ public class Game implements NetworkManager {
         MapPoint last = mapPoints.get(mapPoints.size() - 1).copy();
 
         boolean result =  moveDecorator.checkMove(mapPoints, abstractPlayer);
+
+        System.out.println("result:" + result);
 
         if(result){
             handleConfirmedMove(first, last, abstractPlayer);
