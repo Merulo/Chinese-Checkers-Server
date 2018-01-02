@@ -1,7 +1,7 @@
 package Server.ComputerStrategy;
 
 import Server.Player.AbstractPlayer;
-import Server.Rules.MoveDecorator;
+import Server.GameProperties.MoveDecorator;
 
 /**@author Damian Nowak
  * Strategy interface. Open-closed principle

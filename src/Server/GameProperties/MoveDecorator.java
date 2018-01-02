@@ -1,11 +1,13 @@
-package Server.Rules;
+package Server.GameProperties;
 
 import Server.Map.Map;
 import Server.Map.MapPoint;
 import Server.Player.AbstractPlayer;
 
 import java.util.*;
-
+/**@author Damian Nowak
+ * Decorates moves
+ */
 public class MoveDecorator {
     private ArrayList<MoveRule> moveRules;
     private int pawnNumber;
@@ -79,21 +81,20 @@ public class MoveDecorator {
                     copy.getField(mapPoints.get(result)).setPlayerOnField(abstractPlayer);
                     //copy.printMap();
 
-
-
                     mapPoints.subList(0, result).clear();
                     changed = true;
                     moveApplied = true;
                     break;
-                }
-                for(MapPoint mapPoint : mapPoints){
-                    mapPoint.print();
                 }
             }
             if (!changed){
                 return false;
             }
         }
+    }
+
+    public void replacePlayer(AbstractPlayer oldPlayer, AbstractPlayer newPlayer){
+        map.replacePlayer(oldPlayer, newPlayer);
     }
 
 

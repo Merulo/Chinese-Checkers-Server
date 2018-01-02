@@ -3,10 +3,11 @@ package Server.ComputerStrategy;
 import Server.Map.Map;
 import Server.Map.MapPoint;
 import Server.Player.AbstractPlayer;
-import Server.Rules.MoveDecorator;
-import Server.Rules.MoveRule;
+import Server.GameProperties.MoveDecorator;
+import Server.GameProperties.MoveRule;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 
 /**@author Damian Nowak
@@ -17,6 +18,9 @@ public class AggressiveStrategy implements Strategy {
 
     //returns move as String, is not game depended
     public String getMove(MoveDecorator moveDecorator, AbstractPlayer abstractPlayer){
+        if(abstractPlayer == null || moveDecorator == null){
+            return "Skip;";
+        }
         Map map = moveDecorator.getMap();
         //all the home fields
         ArrayList<MapPoint> home = map.getMyHome(abstractPlayer);
@@ -24,8 +28,6 @@ public class AggressiveStrategy implements Strategy {
         ArrayList<MapPoint> notInHome = new ArrayList<>();
         //pawns in home fields
         ArrayList<MapPoint> inHome = new ArrayList<>();
-        //moves
-        ArrayList<MapPoint> moves;
 
         //fill pawns in home and not in home
         for(MapPoint mapPoint : map.getMyPawns(abstractPlayer)){
@@ -57,23 +59,17 @@ public class AggressiveStrategy implements Strategy {
             notInHome.sort(Comparator.comparing((MapPoint mp) -> -mp.getDistance(target)));
         }
 
-        //get the pawns not in home which can move closer than the old distance
-        for(MapPoint mapPoint : notInHome){
-            moves = getBestMove(freeTile, mapPoint, moveDecorator, abstractPlayer);
+        String result = GetMove(notInHome, freeTile, moveDecorator, abstractPlayer);
 
-            if (moves.size() > 0){
-                return listToString(moves);
-            }
-        }
-        //get the pawns not in home which can move closer than the old distance
-        for(MapPoint mapPoint : inHome){
-            moves = getBestMove(freeTile, mapPoint, moveDecorator, abstractPlayer);
-
-            if (moves.size() > 0){
-                return listToString(moves);
-            }
+        if(result != null){
+            return result;
         }
 
+        result = GetMove(inHome, freeTile, moveDecorator, abstractPlayer);
+
+        if(result != null){
+            return result;
+        }
         return "Skip;";
     }
 
@@ -96,15 +92,53 @@ public class AggressiveStrategy implements Strategy {
             MoveDecorator moveDecorator,
             AbstractPlayer player) {
         //result array
-        ArrayList<MapPoint> mapPoints = null;
+        ArrayList<MapPoint> mapPoints;
 
         for(MoveRule moveRule : moveDecorator.getMoveRules()) {
             mapPoints = moveRule.getBestMove(moveDecorator.getMap(), target, mapPoint, player);
+            if(mapPoints != null){
+                return mapPoints;
+            }
         }
-        //do not return null!
-        if(mapPoints == null){
-            mapPoints = new ArrayList<>();
+        return new ArrayList<>();
+    }
+
+
+    private String GetMove(ArrayList<MapPoint> notInHome, MapPoint freeTile, MoveDecorator moveDecorator, AbstractPlayer abstractPlayer){
+        ArrayList<MapPoint> randomPoints = new ArrayList<>();
+        ArrayList<MapPoint> moves;
+
+        if(notInHome.size() > 0){
+            int d = freeTile.getDistance(notInHome.get(0));
+
+            for(MapPoint mapPoint : notInHome){
+                if(d == mapPoint.getDistance(freeTile)){
+                    randomPoints.add(mapPoint.copy());
+                }
+                else{
+                    break;
+                }
+            }
+
+            Collections.shuffle(randomPoints);
+
+            for(MapPoint mapPoint : randomPoints){
+                moves = getBestMove(freeTile, mapPoint, moveDecorator, abstractPlayer);
+
+                if (moves.size() > 0){
+                    return listToString(moves);
+                }
+            }
+
+            //get the pawns not in home which can move closer than the old distance
+            for(MapPoint mapPoint : notInHome){
+                moves = getBestMove(freeTile, mapPoint, moveDecorator, abstractPlayer);
+
+                if (moves.size() > 0){
+                    return listToString(moves);
+                }
+            }
         }
-        return mapPoints;
+        return null;
     }
 }

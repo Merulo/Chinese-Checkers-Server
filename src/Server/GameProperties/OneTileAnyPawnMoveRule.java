@@ -1,4 +1,4 @@
-package Server.Rules;
+package Server.GameProperties;
 
 import Server.Map.Map;
 import Server.Map.MapPoint;
@@ -6,11 +6,13 @@ import Server.Player.AbstractPlayer;
 
 import java.util.ArrayList;
 
-//allows moving to the adjacent tile if it is free
+/**@author Damian Nowak
+ * Allows jumping one pawn
+ */
 public class OneTileAnyPawnMoveRule extends MoveRule {
 
     public OneTileAnyPawnMoveRule(){
-        priority = 10;
+        priority = 9;
         max_usages = 1;
         uses_left = max_usages;
     }
@@ -24,6 +26,12 @@ public class OneTileAnyPawnMoveRule extends MoveRule {
         MapPoint starting   = mapPoints.get(0);
         MapPoint middle     = mapPoints.get(1);
         MapPoint ending     = mapPoints.get(2);
+
+        if(map.getField(starting).getHomePlayer() == abstractPlayer){
+            if(map.getField(ending).getHomePlayer() != abstractPlayer){
+                return -1;
+            }
+        }
 
         //field is taken
         if(map.getField(ending).getPlayerOnField() != null){
@@ -41,6 +49,10 @@ public class OneTileAnyPawnMoveRule extends MoveRule {
         }
 
         if(map.getField(starting).getPlayerOnField() != abstractPlayer){
+            return -1;
+        }
+
+        if(map.getField(starting).getHomePlayer() == abstractPlayer){
             return -1;
         }
 
@@ -66,24 +78,26 @@ public class OneTileAnyPawnMoveRule extends MoveRule {
     @Override
     public ArrayList<MapPoint> getBestMove(Map map, MapPoint target, MapPoint starting, AbstractPlayer player){
         int distance = target.getDistance(starting);
+
         ArrayList<MapPoint> move = new ArrayList<>();
+        ArrayList<MapPoint> best = new ArrayList<>();
 
         for(int i = -2; i <= 2; i++){
             for(int j = -2; j <= 2; j++){
                 if(map.getField(new MapPoint(starting.getX() + i, starting.getY() + j))!= null){
                     MapPoint mp = new MapPoint(starting.getX() + i, starting.getY() + j);
 
-                    float tmpx = (starting.getX() + mp.getX())/2;
-                    float tmpy = (starting.getY() + mp.getY())/2;
+                    float tmpX = (starting.getX() + mp.getX())/2;
+                    float tmpY = (starting.getY() + mp.getY())/2;
 
-                    if((int) tmpx != tmpx){
+                    if((int) tmpX != tmpX){
                         continue;
                     }
 
-                    if((int) tmpy != tmpy){
+                    if((int) tmpY != tmpY){
                         continue;
                     }
-                    MapPoint middle = new MapPoint((int)tmpx , (int) tmpy);
+                    MapPoint middle = new MapPoint((int)tmpX , (int) tmpY);
 
                     move.clear();
                     reset();
@@ -94,13 +108,21 @@ public class OneTileAnyPawnMoveRule extends MoveRule {
                     if(checkMove(map, move, player,false) == -1){
                         continue;
                     }
+
                     if (target.getDistance(mp) < distance){
-                        return move;
+                        best.clear();
+                        for(MapPoint mapPoint : move){
+                            best.add(mapPoint.copy());
+                        }
+                        distance = target.getDistance(mp);
                     }
                 }
             }
         }
-        return null;
+        if(best.isEmpty()){
+            return null;
+        }
+        return best;
     }
 }
 

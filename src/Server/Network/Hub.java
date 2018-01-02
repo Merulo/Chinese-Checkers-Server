@@ -2,19 +2,20 @@ package Server.Network;
 
 import Server.Player.AbstractPlayer;
 import Server.Player.HumanPlayer;
-import Server.Rules.AdjacentMoveRule;
-import Server.Rules.MoveRule;
-import Server.Rules.OneTileAnyPawnMoveRule;
-import Server.Rules.TwoTilesNoPawnsRule;
+import Server.GameProperties.AdjacentMoveRule;
+import Server.GameProperties.MoveRule;
+import Server.GameProperties.OneTileAnyPawnMoveRule;
+import Server.GameProperties.TwoTilesNoPawnsRule;
 import Server.SimpleParser;
 
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-//Hub class, extends thread
-//this allows to handle the lobbies!
-
+/** @author Damian Nowak
+ * Hub class, creates new Human players
+ * Sends general lobby information
+ */
 public class Hub extends Thread implements NetworkManager {
     //list of lobbies opened on status
     private List<Lobby> lobbies;
@@ -75,6 +76,7 @@ public class Hub extends Thread implements NetworkManager {
         }
     }
 
+    //parses the message
     @Override
     public synchronized void parse(AbstractPlayer abstractPlayer, String message){
         String type = SimpleParser.parse(message);
@@ -93,8 +95,13 @@ public class Hub extends Thread implements NetworkManager {
         }
     }
 
+    //returns list of rules
+    public List<MoveRule> getMoveRules() {
+        return moveRules;
+    }
+
     //add new socket to the players list
-    synchronized void addClient(Socket socket){
+    public synchronized void addClient(Socket socket){
         System.out.println("NEW HUB CLIENT");
         players.add(new HumanPlayer(socket, this));
         players.get(players.size() - 1).start();
@@ -102,7 +109,7 @@ public class Hub extends Thread implements NetworkManager {
     }
 
     //sends one lobby data to all the players
-    synchronized void sendGame(Lobby lobby){
+    public synchronized void sendGame(Lobby lobby){
         for (AbstractPlayer client : players){
             client.sendMessage(lobby.getGameData());
         }
@@ -131,7 +138,4 @@ public class Hub extends Thread implements NetworkManager {
         }
     }
 
-    public List<MoveRule> getMoveRules() {
-        return moveRules;
-    }
 }

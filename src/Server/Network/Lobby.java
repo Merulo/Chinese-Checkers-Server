@@ -7,10 +7,12 @@ import Server.Player.ComputerPlayer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import Server.Rules.Settings;
+import Server.GameProperties.Settings;
 import Server.SimpleParser;
 
-//Lobby/Lobby class
+/** @author Damian Nowak
+ * Lobby handles interatcions within the lobby
+ */
 public class Lobby implements NetworkManager {
     //list of players connected to the game
     volatile private ArrayList<AbstractPlayer> players;
@@ -19,7 +21,7 @@ public class Lobby implements NetworkManager {
     //variable with the settings of the game
     private Settings settings;
     //max countdown
-    private final int maxCountDown = 3;
+    private final int maxCountDown = 3  ;
     //countdown variable
     private int countDown = maxCountDown;
     //countdown time variable
@@ -29,9 +31,8 @@ public class Lobby implements NetworkManager {
     //number of this lobby
     private int number;
 
-
     //creates game, sets hub, and gives the game number
-    Lobby(Hub hub, int number){
+    public Lobby(Hub hub, int number){
         this.number = number;
         players = new ArrayList<>();
         settings = new Settings(hub, this, "Lobby: " + Integer.toString(number + 1), number);
@@ -91,6 +92,14 @@ public class Lobby implements NetworkManager {
     @Override
     public synchronized void enter(AbstractPlayer client, int number){
         System.out.println("MOVING FROM LOBBY TO HUB");
+        int tmp =0;
+
+        for(AbstractPlayer abstractPlayer : players){
+            if(abstractPlayer == client){
+                break;
+            }
+            tmp++;
+        }
 
         if(players.get(0) == client){
             if(players.size() > 1)
@@ -98,7 +107,7 @@ public class Lobby implements NetworkManager {
         }
         players.remove(client);
         for(AbstractPlayer abstractPlayer : players){
-            abstractPlayer.sendMessage("Remove;" + client.getNick() + ";");
+            abstractPlayer.sendMessage("Remove;" + Integer.toString(tmp)+ ";");
         }
 
         removeAdminBots();
@@ -106,6 +115,7 @@ public class Lobby implements NetworkManager {
         hub.addPlayer(client);
     }
 
+    //parses the message
     @Override
     public synchronized void parse(AbstractPlayer abstractPlayer, String message){
         System.out.println("LOBBY MESSAGE: " + message);
@@ -128,10 +138,6 @@ public class Lobby implements NetworkManager {
                 addBot();
                 break;
             }
-            case "RemoveBot":{
-                //removeAbstractPlayer(message , -1);
-                break;
-            }
             case "Kick":{
                 removePlayer(message, abstractPlayer);
             }
@@ -139,6 +145,7 @@ public class Lobby implements NetworkManager {
         }
     }
 
+    //resets the lobby to the new state
     public void reset(){
         players = new ArrayList<>();
         settings = new Settings(hub, this, "Lobby: " + Integer.toString(number + 1), number);
@@ -146,29 +153,84 @@ public class Lobby implements NetworkManager {
         game = null;
     }
 
-    private void removePlayer(String message, AbstractPlayer abstractPlayer){
-        if (abstractPlayer == players.get(0)){
-            message = SimpleParser.cut(message);
-            int i = Integer.parseInt(message);
-            i--;
-            if(i < players.size() && i != 0) {
-                removeAbstractPlayer(players.get(i).getNick(), i);
+
+    //sends detailed game data
+    public void sendDetailedGameData(){
+        hub.sendGame(this);
+    }
+
+    //validates the player count
+    public boolean validatePlayerCount(){
+        int playerCount = players.size();
+        return (playerCount == 2 || playerCount == 3 || playerCount == 4|| playerCount == 6);
+    }
+
+    //validates readiness of player
+    public boolean validatePlayerReady(){
+        if(players.size() > 0 && players.get(0).isReady()) {
+            if (settings.getMoveDecorator().getMoveRules().size() == 0) {
+                resendMessage("Select more rules!", null);
+                players.get(0).setReady(false);
+                players.get(0).sendMessage("Cancel");
+                return false;
             }
+            return true;
+        }
+
+        return false;
+    }
+
+    //returns true if lobby is full
+    public boolean isFull(){
+        return (settings.getMaxPlayerNumber() == players.size());
+    }
+
+    public Game getGame() {
+        return game;
+    }
+
+    //resets countdown
+    public void resetCountdown(){
+        countDown = maxCountDown;
+        startMillis = System.currentTimeMillis();
+    }
+
+    //counts down
+    public void countDown(){
+        if ((System.currentTimeMillis() - this.startMillis) / 1000.0 > 1) {
+            startMillis = System.currentTimeMillis();
+            countDown--;
+
+            resendMessage("Odliczenia do rozpoczecia: " + Integer.toString(countDown), null);
         }
     }
 
-    private void removeAdminBots(){
-        if(players.size() > 0) {
-            if (players.get(0) instanceof ComputerPlayer) {
-                AbstractPlayer computer = players.get(0);
-                players.remove(computer);
+    //returns countdown
+    public int getCountDown(){
+        return countDown;
+    }
 
-                for(AbstractPlayer player : players){
-                    player.sendMessage("Remove;" + computer.getNick());
-                }
-                removeAdminBots();
-            }
+    //cares the game instance
+    public void startGame(){
+        for (AbstractPlayer player : players) {
+            player.sendMessage("Start;TBA;");
         }
+        game = new Game(players, hub, this, settings.getMoveDecorator());
+
+        for (AbstractPlayer player : players) {
+            player.setNetworkManager(game);
+        }
+    }
+
+    //handles lobby
+    void handleLobby(){
+        settings.getLobbyState().handleLobby();
+    }
+
+    //returns true if it is possible to join the game
+    boolean canJoin(){
+        return settings.getMaxPlayerNumber()>players.size()
+                && (settings.getLobbyState().getState() instanceof Open);
     }
 
     //returns game data which can be send to other players
@@ -176,10 +238,35 @@ public class Lobby implements NetworkManager {
         return settings.getGeneralData(players.size());
     }
 
-    //returns true if it is possible to join the game
-    boolean canJoin(){
-        return settings.getMaxPlayerNumber()>players.size()
-                && (settings.getLobbyState().getState() instanceof Open);
+    //removes player from the lobby
+    private void removePlayer(String message, AbstractPlayer abstractPlayer){
+        if (abstractPlayer == players.get(0)){
+            message = SimpleParser.cut(message);
+            int i = Integer.parseInt(message);
+            i--;
+            if(i < players.size() && i != 0) {
+                removeAbstractPlayer(i);
+            }
+        }
+    }
+
+    //removes Admin Bots who are master
+    private void removeAdminBots(){
+        if(players.size() > 0) {
+            if (players.get(0) instanceof ComputerPlayer) {
+                AbstractPlayer computer = players.get(0);
+                players.remove(computer);
+
+                for(AbstractPlayer player : players){
+                    player.sendMessage("Remove;0;");
+                }
+                removeAdminBots();
+            }
+        }
+        if(players.size() > 0) {
+            players.get(0).sendMessage("Master;");
+        }
+
     }
 
     //resend messages to other players in current game
@@ -221,83 +308,14 @@ public class Lobby implements NetworkManager {
             hub.sendGame(this);
         }
         else {
+            System.out.println("sending settings");
             p.sendMessage(settings.getDetailedData(players.size()));
-        }
-    }
-
-    //sends detailed game data
-    public void sendDetailedGameData(){
-        hub.sendGame(this);
-    }
-
-    //handles lobby
-    void handleLobby(){
-        settings.getLobbyState().handleLobby();
-    }
-
-    //validates the player count
-    public boolean validatePlayerCount(){
-        int playerCount = players.size();
-        return (playerCount == 2 || playerCount == 3 || playerCount == 4|| playerCount == 6);
-    }
-
-    //validates readiness of player
-    public boolean validatePlayerReady(){
-        if(players.size() > 0 && players.get(0).isReady()) {
-            if (settings.getMoveDecorator().getMoveRules().size() == 0) {
-                resendMessage("Select more rules!", null);
-                players.get(0).setReady(false);
-                players.get(0).sendMessage("Cancel");
-                return false;
-            }
-            return true;
-        }
-
-        return false;
-    }
-
-    //resets countdown
-    public void resetCountdown(){
-        countDown = maxCountDown;
-        startMillis = System.currentTimeMillis();
-    }
-
-    //counts down
-    public void countDown(){
-        if ((System.currentTimeMillis() - this.startMillis) / 1000.0 > 1) {
-            startMillis = System.currentTimeMillis();
-            countDown--;
-            for (AbstractPlayer player : players) {
-                player.sendMessage("Countdown;" + Integer.toString(countDown) + ";");
-            }
-        }
-    }
-
-    //returns countdown
-    public int getCountDown(){
-        return countDown;
-    }
-
-    //cares the game instance
-    public void startGame(){
-        for (AbstractPlayer player : players) {
-                player.sendMessage("Start;TBA;");
-        }
-        game = new Game(players, hub, this, settings.getMoveDecorator());
-
-        for (AbstractPlayer player : players) {
-            player.setNetworkManager(game);
         }
     }
 
     //returns the current time stamp
     private String getTimeStamp(){
         return "<" + new SimpleDateFormat("HH:mm:ss").format(new Date()) + "> ";
-    }
-
-    //returns true if lobby is full
-    public boolean isFull(){
-        return (settings.getMaxPlayerNumber() == players.size());
     }
 
     //adds bot
@@ -316,7 +334,7 @@ public class Lobby implements NetworkManager {
     }
 
     //removes player
-    private void removeAbstractPlayer(String message, int i){
+    private void removeAbstractPlayer(int i){
         AbstractPlayer abstractPlayer = players.get(i);
         if (abstractPlayer instanceof ComputerPlayer) {
             if(players.get(0) == abstractPlayer){
@@ -335,9 +353,5 @@ public class Lobby implements NetworkManager {
         for (AbstractPlayer player : players) {
             player.sendMessage("Remove;" + Integer.toString(i) + ";");
         }
-    }
-
-    public Game getGame() {
-        return game;
     }
 }

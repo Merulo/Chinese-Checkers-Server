@@ -5,38 +5,39 @@ import Server.Map.MapPoint;
 import Server.Player.AbstractPlayer;
 import Server.Player.ComputerPlayer;
 import Server.Player.HumanPlayer;
-import Server.Rules.MoveDecorator;
+import Server.GameProperties.MoveDecorator;
 import Server.SimpleParser;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Random;
 
+/**@author Damian Nowak
+ * The Game class focuses on handling in game events
+ */
 public class Game implements NetworkManager {
     //list of players
-    volatile private List<AbstractPlayer> players;
+    volatile private ArrayList<AbstractPlayer> players;
     //the main hub
     private Hub hub;
     //the main lobby
     private Lobby lobby;
-    //map
-    private Map map;
     //MoveDecorator
     private MoveDecorator moveDecorator;
     //current player
     private AbstractPlayer currentPlayer;
 
-    Game(ArrayList<AbstractPlayer> players, Hub hub, Lobby lobby, MoveDecorator moveDecorator){
+    public Game(ArrayList<AbstractPlayer> players, Hub hub, Lobby lobby, MoveDecorator moveDecorator){
         this.hub = hub;
         this.lobby = lobby;
         this.players = players;
         this.moveDecorator = moveDecorator;
-        map = new Map(moveDecorator.getPawnNumber());
+        Map map = new Map(moveDecorator.getPawnNumber());
         moveDecorator.setMap(map);
-        map.setPlayers(players);
-        map.setUpMap();
+        map.setUpMap(players);
+
+        players.get(0).setReady(false);
 
         currentPlayer = players.get(new Random().nextInt(players.size()));
 
@@ -46,6 +47,11 @@ public class Game implements NetworkManager {
               player.setNetworkManager(this);
           }
         }
+
+        for(AbstractPlayer player : this.players){
+            player.sendMessage("YourColor;" + player.getData());
+        }
+
         currentPlayer.sendMessage("YourTurn;");
     }
 
@@ -104,7 +110,11 @@ public class Game implements NetworkManager {
                 break;
             }
             case "Skip":{
-                handleSkip();
+                handleSkip(abstractPlayer);
+                break;
+            }
+            case "Leave":{
+                replacePlayerWithComputer(abstractPlayer);
                 break;
             }
         }
@@ -122,7 +132,34 @@ public class Game implements NetworkManager {
 
     private void replacePlayerWithComputer(AbstractPlayer player){
         System.out.println(player.getNick() + " should be replaced by Computer");
-        //TODO: IMPLEMENT THIS METHOD
+
+
+        for(int i =0; i < players.size(); i++){
+            if(players.get(i) == player){
+                ComputerPlayer computerPlayer = new ComputerPlayer();
+                computerPlayer.setMoveDecorator(moveDecorator);
+                computerPlayer.setNetworkManager(this);
+                players.add(i, computerPlayer);
+                players.remove(player);
+
+                if(areThereOnlyBotsInGame()){
+                    break;
+                }
+
+                if(currentPlayer == player){
+                    currentPlayer = getNextCurrentPlayer();
+                    currentPlayer.sendMessage("YourTurn;");
+                }
+
+                moveDecorator.replacePlayer(player, computerPlayer);
+
+                break;
+            }
+        }
+
+        player.setNetworkManager(hub);
+        hub.sendGame(lobby);
+        hub.addPlayer(player);
     }
 
     //returns the current time stamp
@@ -136,6 +173,8 @@ public class Game implements NetworkManager {
             result+= "Server";
         }
         else{
+            message = SimpleParser.cut(message);
+            System.out.println("TESTING: " + message);
             result += abstractPlayer.getNick();
         }
 
@@ -155,6 +194,13 @@ public class Game implements NetworkManager {
             abstractPlayer.sendMessage("NotYourTurn;");
             return;
         }
+        if(hasEverybodyWon()){
+            return;
+        }
+
+        if(abstractPlayer instanceof ComputerPlayer && haveAllHumansWon()){
+            return;
+        }
 
         ArrayList<MapPoint> mapPoints = parseStringToArrayOfMapPoints(message);
         if(!(mapPoints.size() > 0)){
@@ -166,12 +212,13 @@ public class Game implements NetworkManager {
 
         boolean result =  moveDecorator.checkMove(mapPoints, abstractPlayer);
 
-        System.out.println("BOOLEAN: " + result);
+        System.out.println("result:" + result);
+
         if(result){
             handleConfirmedMove(first, last, abstractPlayer);
 
             if(checkWinning(abstractPlayer)){
-                resendMessage(abstractPlayer.getNick() + " has won the game!", null);
+                resendMessage(abstractPlayer.getNick() + " wygral gre!", null);
                 abstractPlayer.setHasWon(true);
             }
         }
@@ -191,11 +238,25 @@ public class Game implements NetworkManager {
         return true;
     }
 
+    private boolean haveAllHumansWon(){
+        for(AbstractPlayer abstractPlayer : players){
+            if(abstractPlayer instanceof HumanPlayer){
+                if(!abstractPlayer.getHasWon()){
+                    return false;
+                }
+            }
+        }
+
+
+        return true;
+    }
+
     private AbstractPlayer getNextCurrentPlayer(){
         int tmp = 0;
 
         if(hasEverybodyWon()){
-            resendMessage("Everybody has won! End of game!", null);
+            resendMessage("Wszyscy wygrali! Koniec gry!", null);
+            return currentPlayer;
         }
 
         for(int i = 0; i < players.size(); i++){
@@ -213,9 +274,14 @@ public class Game implements NetworkManager {
         return players.get(tmp);
     }
 
-    private void handleSkip(){
-        currentPlayer = getNextCurrentPlayer();
-        currentPlayer.sendMessage("YourTurn;");
+    private void handleSkip(AbstractPlayer abstractPlayer){
+        if(abstractPlayer instanceof ComputerPlayer && haveAllHumansWon()){
+            return;
+        }
+        if(currentPlayer == abstractPlayer) {
+            currentPlayer = getNextCurrentPlayer();
+            currentPlayer.sendMessage("YourTurn;");
+        }
     }
 
     private ArrayList<MapPoint> parseStringToArrayOfMapPoints(String message){
@@ -236,11 +302,9 @@ public class Game implements NetworkManager {
         moveDecorator.doMove(first, last, abstractPlayer);
 
         String tmp = "Move;";
-        map.printMap();
+        //map.printMap();
         tmp+=Integer.toString(first.getY()) + "," + Integer.toString(first.getX()) + ";";
         tmp+=Integer.toString(last.getY()) + "," + Integer.toString(last.getX()) + ";";
-
-        System.out.println("Sending: " + tmp);
 
         for (AbstractPlayer player : players){
             player.sendMessage(tmp);

@@ -1,4 +1,4 @@
-package Server.Rules;
+package Server.GameProperties;
 
 import Server.Map.Map;
 import Server.Map.MapPoint;
@@ -6,6 +6,9 @@ import Server.Player.AbstractPlayer;
 
 import java.util.ArrayList;
 
+/**@author Damian Nowak
+ * Abstract MoveRule class
+ */
 abstract public class MoveRule {
 
     int priority;
@@ -22,7 +25,7 @@ abstract public class MoveRule {
 
     //getters, setters
     int getPriority(){
-        return priority;
+        return -priority;
     }
 
     void reset(){

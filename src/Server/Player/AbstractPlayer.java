@@ -3,6 +3,9 @@ package Server.Player;
 import Server.Network.NetworkManager;
 import javafx.scene.paint.Color;
 
+/**@author Damian Nowak
+ * Abstract Player with some setters, getters and basic methods
+ */
 public abstract class AbstractPlayer extends Thread {
 
     Boolean playing = true;

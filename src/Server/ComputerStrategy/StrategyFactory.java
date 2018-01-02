@@ -12,7 +12,7 @@ public class StrategyFactory {
     private ArrayList<Strategy> strategies;
 
     //returns factory
-    public synchronized static StrategyFactory getStrategyFactor(){
+    public synchronized static StrategyFactory getStrategyFactory(){
         if (strategyFactory == null){
             strategyFactory = new StrategyFactory();
         }

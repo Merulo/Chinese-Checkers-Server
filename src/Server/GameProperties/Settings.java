@@ -1,4 +1,4 @@
-package Server.Rules;
+package Server.GameProperties;
 
 import Server.LobbyState.LobbyState;
 import Server.LobbyState.ReadyToStart;
@@ -6,6 +6,9 @@ import Server.Network.Lobby;
 import Server.Network.Hub;
 import Server.SimpleParser;
 
+/**@author Damian Nowak
+ * Class with lobby and game settings
+ */
 public class Settings {
     private LobbyState lobbyState;
     private String gameName;
@@ -23,10 +26,6 @@ public class Settings {
         moveDecorator.setPawnNumber(sizeToPawnCount());
         lobbyState = new LobbyState(lobby);
         size = 5;
-    }
-
-    public int maxPlayerNumber(){
-        return maxPlayerNumber;
     }
 
     public MoveDecorator getMoveDecorator(){
@@ -102,9 +101,12 @@ public class Settings {
             }
             case "Size":{
                 if(size != Integer.parseInt(values)) {
-                    size = Integer.parseInt(values);
-                    moveDecorator.setPawnNumber(sizeToPawnCount());
-                    return true;
+                    if(Integer.parseInt(values) > 1) {
+                        size = Integer.parseInt(values);
+                        moveDecorator.setPawnNumber(sizeToPawnCount());
+                        return true;
+                    }
+                    return false;
                 }
                 return false;
             }

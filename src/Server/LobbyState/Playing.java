@@ -1,6 +1,7 @@
 package Server.LobbyState;
 
-/**CONDITION: (ONE MUST BE TRUE)
+/**@author Damian Nowak
+ * CONDITION: (ONE MUST BE TRUE)
  * At least one human player still playing the game
  * BEHAVIOUR:
  * Handle player messages

@@ -1,6 +1,5 @@
 package Server;
 
-//TODO: THINK ABOUT MAKING THIS CLASS A SINGLETON?
 public class SimpleParser {
     public static String parse(String message, String delimiter){
         if (message.contains(delimiter))

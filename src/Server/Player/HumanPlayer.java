@@ -10,6 +10,9 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+/**@author Damian Nowak
+ * Human version of Abstract Player
+ */
 public class HumanPlayer extends AbstractPlayer {
     private BufferedReader input;
     private PrintWriter output;
@@ -24,7 +27,6 @@ public class HumanPlayer extends AbstractPlayer {
         catch (IOException e) {
             System.out.println("Player died: " + e);
         }
-        output.println("WELCOME");
     }
 
     @Override
@@ -42,7 +44,7 @@ public class HumanPlayer extends AbstractPlayer {
             }
         }
         catch (IOException e) {
-            System.out.println("Player died: " + e);
+            System.out.println("Player was removed");
         }
     }
 
