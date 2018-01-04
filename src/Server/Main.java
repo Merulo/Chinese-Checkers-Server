@@ -1,9 +1,6 @@
 package Server;
 
-import Server.Map.MapPoint;
 import Server.Network.Server;
-
-import java.util.ArrayList;
 
 public class Main {
 
